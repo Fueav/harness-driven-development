@@ -30,6 +30,60 @@ def require(condition: bool, message: str, errors: list[str]) -> None:
         errors.append(message)
 
 
+def validate_declared_skill_path(
+    manifest: dict,
+    label: str,
+    expected: str | list[str],
+    errors: list[str],
+) -> None:
+    declared = manifest.get("skills")
+    valid = declared == expected
+    require(valid, f"{label} declared Skill path is invalid", errors)
+    if not valid:
+        return
+
+    relative = declared if isinstance(declared, str) else declared[0]
+    declared_root = PLUGIN / relative
+    try:
+        resolved_root = declared_root.resolve(strict=True)
+        resolved_plugin = PLUGIN.resolve(strict=True)
+    except OSError:
+        errors.append(f"{label} declared Skill path is invalid")
+        return
+
+    skill_entry = resolved_root / NAME / "SKILL.md"
+    require(
+        resolved_root.is_relative_to(resolved_plugin)
+        and skill_entry.is_file()
+        and skill_entry.resolve().is_relative_to(resolved_plugin),
+        f"{label} declared Skill path is invalid",
+        errors,
+    )
+
+
+def validate_marketplace_source(source: object, label: str, errors: list[str]) -> None:
+    expected = f"./plugins/{NAME}"
+    require(source == expected, f"{label} marketplace source is wrong", errors)
+    if source != expected:
+        return
+
+    source_path = ROOT / expected
+    try:
+        resolved_root = ROOT.resolve(strict=True)
+        resolved_source = source_path.resolve(strict=True)
+    except OSError:
+        errors.append(f"{label} marketplace source is missing")
+        return
+
+    require(
+        not source_path.is_symlink()
+        and resolved_source.is_relative_to(resolved_root)
+        and resolved_source.is_dir(),
+        f"{label} marketplace source must stay within repository",
+        errors,
+    )
+
+
 def main() -> int:
     errors: list[str] = []
     version_path = ROOT / "VERSION"
@@ -44,6 +98,8 @@ def main() -> int:
         f"codex plugin remove {NAME}@{NAME}",
         f"codex plugin marketplace remove {NAME}",
         f"codex plugin marketplace upgrade {MARKETPLACE_NAME}",
+        f"claude plugin marketplace remove {NAME} --scope user",
+        f"claude plugin marketplace add Fueav/{NAME} --scope user",
         f"claude plugin update {NAME}@{MARKETPLACE_NAME}",
     ):
         require(command in readme_text, f"README must document: {command}", errors)
@@ -66,16 +122,8 @@ def main() -> int:
         require(manifest.get("name") == NAME, f"{key} name must be {NAME}", errors)
         require(manifest.get("version") == version, f"{key} version must equal VERSION", errors)
 
-    require(
-        manifests.get("codex_plugin", {}).get("skills") == "./skills/",
-        "Codex plugin must load ./skills/",
-        errors,
-    )
-    require(
-        manifests.get("claude_plugin", {}).get("skills") == ["./skills/"],
-        "Claude plugin must load ./skills/",
-        errors,
-    )
+    validate_declared_skill_path(manifests.get("codex_plugin", {}), "Codex plugin", "./skills/", errors)
+    validate_declared_skill_path(manifests.get("claude_plugin", {}), "Claude plugin", ["./skills/"], errors)
 
     codex_entries = manifests.get("codex_marketplace", {}).get("plugins", [])
     codex_marketplace_name = manifests.get("codex_marketplace", {}).get("name")
@@ -97,36 +145,12 @@ def main() -> int:
     )
     codex_entry = next((entry for entry in codex_entries if entry.get("name") == NAME), {})
     codex_source = codex_entry.get("source", {}).get("path")
-    require(
-        codex_source == f"./plugins/{NAME}",
-        "Codex marketplace must point to the shared plugin directory",
-        errors,
-    )
-    if codex_source:
-        codex_plugin = (ROOT / codex_source).resolve()
-        require(codex_plugin == PLUGIN.resolve(), "Codex marketplace source resolves incorrectly", errors)
-        require(
-            (codex_plugin / "skills" / NAME / "SKILL.md").is_file(),
-            "Codex marketplace Skill entrypoint is missing",
-            errors,
-        )
+    validate_marketplace_source(codex_source, "Codex", errors)
 
     claude_entries = manifests.get("claude_marketplace", {}).get("plugins", [])
     claude_entry = next((entry for entry in claude_entries if entry.get("name") == NAME), {})
     claude_source = claude_entry.get("source")
-    require(
-        claude_source == f"./plugins/{NAME}",
-        "Claude marketplace must point to the shared plugin directory",
-        errors,
-    )
-    if claude_source:
-        claude_plugin = (ROOT / claude_source).resolve()
-        require(claude_plugin == PLUGIN.resolve(), "Claude marketplace source resolves incorrectly", errors)
-        require(
-            (claude_plugin / "skills" / NAME / "SKILL.md").is_file(),
-            "Claude marketplace Skill entrypoint is missing",
-            errors,
-        )
+    validate_marketplace_source(claude_source, "Claude", errors)
     require(claude_entry.get("version") == version, "Claude marketplace version must equal VERSION", errors)
 
     skill_path = SKILL / "SKILL.md"

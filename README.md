@@ -12,7 +12,7 @@ codex plugin add harness-driven-development@fueav-harness-development
 ## Install in Claude Code
 
 ```bash
-claude plugin marketplace add Fueav/harness-driven-development
+claude plugin marketplace add Fueav/harness-driven-development --scope user
 claude plugin install harness-driven-development@fueav-harness-development --scope user
 ```
 
@@ -33,8 +33,8 @@ For Claude Code:
 
 ```bash
 claude plugin uninstall harness-driven-development@harness-driven-development --scope user
-claude plugin marketplace remove harness-driven-development
-claude plugin marketplace add Fueav/harness-driven-development
+claude plugin marketplace remove harness-driven-development --scope user
+claude plugin marketplace add Fueav/harness-driven-development --scope user
 claude plugin install harness-driven-development@fueav-harness-development --scope user
 ```
 
@@ -54,8 +54,34 @@ claude plugin update harness-driven-development@fueav-harness-development
 ```bash
 python3 scripts/test_verify_release.py
 python3 scripts/verify_release.py
+CODEX_PYTHON="${CODEX_PYTHON:-python3}"
+CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
+"$CODEX_PYTHON" "$CODEX_HOME/skills/.system/plugin-creator/scripts/validate_plugin.py" plugins/harness-driven-development
+"$CODEX_PYTHON" "$CODEX_HOME/skills/.system/skill-creator/scripts/quick_validate.py" plugins/harness-driven-development/skills/harness-driven-development
+claude plugin validate plugins/harness-driven-development --strict
+claude plugin validate . --strict
 ```
+
+`CODEX_PYTHON` must point to a Python environment with PyYAML for the Codex plugin validator.
 
 ## Roll back to v1
 
-Remove the v2 plugin and marketplace, then add `Fueav/harness-driven-development` with `--ref harness-driven-development--v1.0.0` in Codex or the equivalent pinned marketplace source in Claude Code. Published tags are immutable.
+For Codex:
+
+```bash
+codex plugin remove harness-driven-development@fueav-harness-development
+codex plugin marketplace remove fueav-harness-development
+codex plugin marketplace add Fueav/harness-driven-development --ref harness-driven-development--v1.0.0
+codex plugin add harness-driven-development@harness-driven-development
+```
+
+For Claude Code:
+
+```bash
+claude plugin uninstall harness-driven-development@fueav-harness-development --scope user
+claude plugin marketplace remove fueav-harness-development --scope user
+claude plugin marketplace add Fueav/harness-driven-development@harness-driven-development--v1.0.0 --scope user
+claude plugin install harness-driven-development@harness-driven-development --scope user
+```
+
+Published tags are immutable.
