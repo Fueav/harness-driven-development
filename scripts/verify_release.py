@@ -11,6 +11,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 NAME = "harness-driven-development"
+MARKETPLACE_NAME = "fueav-harness-development"
 PLUGIN = ROOT / "plugins" / NAME
 SKILL = PLUGIN / "skills" / NAME
 
@@ -34,6 +35,18 @@ def main() -> int:
     version_path = ROOT / "VERSION"
     version = version_path.read_text().strip() if version_path.exists() else ""
     require(bool(re.fullmatch(r"\d+\.\d+\.\d+", version)), "VERSION must be strict semver", errors)
+
+    readme_path = ROOT / "README.md"
+    readme_text = readme_path.read_text() if readme_path.exists() else ""
+    for command in (
+        f"codex plugin marketplace add Fueav/{NAME}",
+        f"codex plugin add {NAME}@{MARKETPLACE_NAME}",
+        f"codex plugin remove {NAME}@{NAME}",
+        f"codex plugin marketplace remove {NAME}",
+        f"codex plugin marketplace upgrade {MARKETPLACE_NAME}",
+        f"claude plugin update {NAME}@{MARKETPLACE_NAME}",
+    ):
+        require(command in readme_text, f"README must document: {command}", errors)
 
     paths = {
         "codex_plugin": PLUGIN / ".codex-plugin" / "plugin.json",
@@ -65,20 +78,55 @@ def main() -> int:
     )
 
     codex_entries = manifests.get("codex_marketplace", {}).get("plugins", [])
-    codex_entry = next((entry for entry in codex_entries if entry.get("name") == NAME), {})
+    codex_marketplace_name = manifests.get("codex_marketplace", {}).get("name")
+    claude_marketplace_name = manifests.get("claude_marketplace", {}).get("name")
     require(
-        codex_entry.get("source", {}).get("path") == f"./plugins/{NAME}",
+        codex_marketplace_name == MARKETPLACE_NAME,
+        f"Codex marketplace name must be {MARKETPLACE_NAME}",
+        errors,
+    )
+    require(
+        claude_marketplace_name == MARKETPLACE_NAME,
+        f"Claude marketplace name must be {MARKETPLACE_NAME}",
+        errors,
+    )
+    require(
+        codex_marketplace_name != NAME and claude_marketplace_name != NAME,
+        "marketplace name must differ from plugin name",
+        errors,
+    )
+    codex_entry = next((entry for entry in codex_entries if entry.get("name") == NAME), {})
+    codex_source = codex_entry.get("source", {}).get("path")
+    require(
+        codex_source == f"./plugins/{NAME}",
         "Codex marketplace must point to the shared plugin directory",
         errors,
     )
+    if codex_source:
+        codex_plugin = (ROOT / codex_source).resolve()
+        require(codex_plugin == PLUGIN.resolve(), "Codex marketplace source resolves incorrectly", errors)
+        require(
+            (codex_plugin / "skills" / NAME / "SKILL.md").is_file(),
+            "Codex marketplace Skill entrypoint is missing",
+            errors,
+        )
 
     claude_entries = manifests.get("claude_marketplace", {}).get("plugins", [])
     claude_entry = next((entry for entry in claude_entries if entry.get("name") == NAME), {})
+    claude_source = claude_entry.get("source")
     require(
-        claude_entry.get("source") == f"./plugins/{NAME}",
+        claude_source == f"./plugins/{NAME}",
         "Claude marketplace must point to the shared plugin directory",
         errors,
     )
+    if claude_source:
+        claude_plugin = (ROOT / claude_source).resolve()
+        require(claude_plugin == PLUGIN.resolve(), "Claude marketplace source resolves incorrectly", errors)
+        require(
+            (claude_plugin / "skills" / NAME / "SKILL.md").is_file(),
+            "Claude marketplace Skill entrypoint is missing",
+            errors,
+        )
     require(claude_entry.get("version") == version, "Claude marketplace version must equal VERSION", errors)
 
     skill_path = SKILL / "SKILL.md"

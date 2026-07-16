@@ -1,6 +1,6 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "harness-driven-development",
+  "name": "fueav-harness-development",
   "description": "Cross-client Harness workflow skills.",
   "owner": {
     "name": "Fueav"
@@ -10,7 +10,7 @@
       "name": "harness-driven-development",
       "source": "./plugins/harness-driven-development",
       "description": "Routes repository work through the repository's declared Harness workflow and release gates.",
-      "version": "1.0.0",
+      "version": "2.0.0",
       "author": {
         "name": "Fueav"
       },
