@@ -1,0 +1,20 @@
+{
+  "name": "harness-driven-development",
+  "version": "1.0.0",
+  "description": "Routes repository work through the repository's declared Harness workflow and release gates.",
+  "author": {
+    "name": "Fueav",
+    "url": "https://github.com/Fueav"
+  },
+  "homepage": "https://github.com/Fueav/harness-driven-development",
+  "repository": "https://github.com/Fueav/harness-driven-development",
+  "keywords": [
+    "harness",
+    "specification",
+    "release-gates",
+    "repository-workflow"
+  ],
+  "skills": [
+    "./skills/"
+  ]
+}

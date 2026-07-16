@@ -1,0 +1,4 @@
+interface:
+  display_name: "Harness Driven Development"
+  short_description: "Risk-proportional Harness workflow"
+  default_prompt: "Use $harness-driven-development to apply the repository's declared Harness workflow and release gates."

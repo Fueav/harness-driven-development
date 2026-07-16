@@ -1,0 +1,33 @@
+{
+  "name": "harness-driven-development",
+  "version": "1.0.0",
+  "description": "Routes repository work through the repository's declared Harness workflow and release gates.",
+  "author": {
+    "name": "Fueav",
+    "url": "https://github.com/Fueav"
+  },
+  "homepage": "https://github.com/Fueav/harness-driven-development",
+  "repository": "https://github.com/Fueav/harness-driven-development",
+  "keywords": [
+    "harness",
+    "specification",
+    "release-gates",
+    "repository-workflow"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Harness Driven Development",
+    "shortDescription": "Risk-proportional repository workflow routing",
+    "longDescription": "Select the lightest repository-declared Harness workflow, follow its source-of-truth artifacts and gates, and report verification evidence.",
+    "developerName": "Fueav",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Use the repository's Harness workflow for this change."
+    ]
+  }
+}
