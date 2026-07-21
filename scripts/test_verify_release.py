@@ -114,6 +114,19 @@ class ReleaseValidatorTests(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0, output)
             self.assertIn("legacy duplicate references remain", output)
 
+    def test_rejects_skill_symlink(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            checkout = self.copy_checkout(temp_dir)
+            path = checkout / "plugins" / NAME / "skills" / NAME / "SKILL.md"
+            external = Path(temp_dir) / "external-skill.md"
+            external.write_text(path.read_text())
+            path.unlink()
+            path.symlink_to(external)
+            result = self.run_validator(checkout)
+            output = result.stdout + result.stderr
+            self.assertNotEqual(result.returncode, 0, output)
+            self.assertIn("Skill package must not contain symlinks", output)
+
 
 if __name__ == "__main__":
     unittest.main()
