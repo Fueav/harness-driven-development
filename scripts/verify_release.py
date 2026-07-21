@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -153,13 +154,56 @@ def main() -> int:
     validate_marketplace_source(claude_source, "Claude", errors)
     require(claude_entry.get("version") == version, "Claude marketplace version must equal VERSION", errors)
 
+    files = {
+        path.relative_to(SKILL).as_posix()
+        for path in SKILL.rglob("*")
+        if path.is_file()
+    } if SKILL.exists() else set()
+    expected_files = {"SKILL.md", "agents/openai.yaml", "references/checklists.md"}
+    require(files == expected_files, f"Skill package has unexpected files: {sorted(files)}", errors)
+    require(
+        not any(path.is_symlink() for path in SKILL.rglob("*")),
+        "Skill package must not contain symlinks",
+        errors,
+    )
+
     skill_path = SKILL / "SKILL.md"
-    if skill_path.exists():
-        skill_text = skill_path.read_text()
-        require(len(skill_text.splitlines()) <= 60, "SKILL.md exceeds 60 lines", errors)
-        require(f"name: {NAME}" in skill_text, "SKILL.md name is incorrect", errors)
-    else:
-        errors.append("missing shared SKILL.md")
+    skill_text = (
+        skill_path.read_text()
+        if skill_path.is_file() and not skill_path.is_symlink()
+        else ""
+    )
+    require(len(skill_text.splitlines()) <= 40, "SKILL.md exceeds 40 lines", errors)
+    require(len(skill_text.split()) <= 250, "SKILL.md exceeds 250 words", errors)
+    require(f"name: {NAME}" in skill_text, "SKILL.md name is incorrect", errors)
+    for token in (
+        "router, not as a second repository methodology",
+        "Read the nearest `AGENTS.md`",
+        "lightest declared workflow",
+        "## Stop Conditions",
+        "## Evidence Contract",
+    ):
+        require(token in skill_text, f"SKILL.md is missing router contract: {token}", errors)
+
+    checklist_path = SKILL / "references" / "checklists.md"
+    checklist_text = (
+        checklist_path.read_text()
+        if checklist_path.is_file() and not checklist_path.is_symlink()
+        else ""
+    )
+    require(len(checklist_text.splitlines()) <= 30, "checklists.md exceeds 30 lines", errors)
+    require(len(checklist_text.split()) <= 250, "checklists.md exceeds 250 words", errors)
+    package_bytes = sum((SKILL / relative).stat().st_size for relative in files)
+    require(package_bytes <= 6144, "Skill package exceeds 6144 bytes", errors)
+    require(not any(SKILL.glob("scripts/**/*")), "Skill package must not contain scripts", errors)
+
+    openai_path = SKILL / "agents" / "openai.yaml"
+    openai_text = (
+        openai_path.read_text()
+        if openai_path.is_file() and not openai_path.is_symlink()
+        else ""
+    )
+    require("$harness-driven-development" in openai_text, "OpenAI prompt must invoke the Skill", errors)
 
     old_references = {
         "code-review-checklist.md",
@@ -177,6 +221,18 @@ def main() -> int:
             print(f"FAIL: {error}", file=sys.stderr)
         return 1
 
+    eval_contract = subprocess.run(
+        [sys.executable, "scripts/verify_evals.py"],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if eval_contract.returncode != 0:
+        print(eval_contract.stdout, end="")
+        print(eval_contract.stderr, end="", file=sys.stderr)
+        print("FAIL: deterministic eval contract failed", file=sys.stderr)
+        return 1
     print(f"release contract ok: {NAME} {version}")
     return 0
 
