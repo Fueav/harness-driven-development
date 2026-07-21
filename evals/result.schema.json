@@ -1,0 +1,25 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["results"],
+  "properties": {
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["case_id", "workflow_class", "decision", "active_spec", "changed_scope", "verification", "residual_risk", "reason"],
+        "properties": {
+          "case_id": {"type": "string"},
+          "workflow_class": {"type": ["string", "null"]},
+          "decision": {"enum": ["continue", "stop"]},
+          "active_spec": {"type": ["string", "null"]},
+          "changed_scope": {"type": "array", "items": {"type": "string"}},
+          "verification": {"type": "array", "items": {"type": "string"}},
+          "residual_risk": {"type": "array", "items": {"type": "string"}},
+          "reason": {"type": "string"}
+        }
+      }
+    }
+  }
+}

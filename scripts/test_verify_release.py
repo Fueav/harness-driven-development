@@ -80,6 +80,40 @@ class ReleaseValidatorTests(unittest.TestCase):
                 self.assertNotEqual(result.returncode, 0, output)
                 self.assertIn("declared Skill path is invalid", output)
 
+    def test_rejects_extra_skill_file(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            checkout = self.copy_checkout(temp_dir)
+            path = checkout / "plugins" / NAME / "skills" / NAME / "references" / "extra.md"
+            path.write_text("duplicate checklist\n")
+            result = self.run_validator(checkout)
+            output = result.stdout + result.stderr
+            self.assertNotEqual(result.returncode, 0, output)
+            self.assertIn("Skill package has unexpected files", output)
+
+    def test_rejects_oversized_skill_and_checklist(self) -> None:
+        for relative, expected in (
+            ("SKILL.md", "SKILL.md exceeds 40 lines"),
+            ("references/checklists.md", "checklists.md exceeds 30 lines"),
+        ):
+            with self.subTest(relative=relative), tempfile.TemporaryDirectory() as temp_dir:
+                checkout = self.copy_checkout(temp_dir)
+                path = checkout / "plugins" / NAME / "skills" / NAME / relative
+                path.write_text(path.read_text() + "\npadding" * 50 + "\n")
+                result = self.run_validator(checkout)
+                output = result.stdout + result.stderr
+                self.assertNotEqual(result.returncode, 0, output)
+                self.assertIn(expected, output)
+
+    def test_rejects_legacy_duplicate_reference(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            checkout = self.copy_checkout(temp_dir)
+            path = checkout / "plugins" / NAME / "skills" / NAME / "references" / "code-review-checklist.md"
+            path.write_text("legacy\n")
+            result = self.run_validator(checkout)
+            output = result.stdout + result.stderr
+            self.assertNotEqual(result.returncode, 0, output)
+            self.assertIn("legacy duplicate references remain", output)
+
 
 if __name__ == "__main__":
     unittest.main()
