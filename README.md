@@ -55,7 +55,7 @@ claude plugin update harness-driven-development@fueav-harness-development
 python3 scripts/test_verify_release.py
 python3 scripts/verify_release.py
 python3 scripts/test_verify_evals.py
-python3 scripts/verify_evals.py --repository /path/to/harness-repository
+python3 scripts/verify_evals.py --results evals/results.json --repository /path/to/harness-repository
 CODEX_PYTHON="${CODEX_PYTHON:-python3}"
 CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
 "$CODEX_PYTHON" "$CODEX_HOME/skills/.system/plugin-creator/scripts/validate_plugin.py" plugins/harness-driven-development
@@ -64,7 +64,7 @@ claude plugin validate plugins/harness-driven-development --strict
 claude plugin validate . --strict
 ```
 
-`CODEX_PYTHON` must point to a Python environment with PyYAML for the Codex plugin validator. Eval validation is deterministic and local; external model execution is deliberately not bundled in this repository.
+`CODEX_PYTHON` must point to a Python environment with PyYAML for the Codex plugin validator. Release validation requires checked-in forward-test results bound to the current Skill package digest; producing those results remains an explicit Agent evaluation step.
 
 ## Roll back to v1
 

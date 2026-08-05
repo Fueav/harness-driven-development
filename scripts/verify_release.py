@@ -180,6 +180,9 @@ def main() -> int:
         "router, not as a second repository methodology",
         "Read the nearest `AGENTS.md`",
         "lightest declared workflow",
+        "semantic novelty",
+        "approved dev config",
+        "`harnessctl evidence verify`",
         "## Stop Conditions",
         "## Evidence Contract",
     ):
@@ -222,7 +225,12 @@ def main() -> int:
         return 1
 
     eval_contract = subprocess.run(
-        [sys.executable, "scripts/verify_evals.py"],
+        [
+            sys.executable,
+            "scripts/verify_evals.py",
+            "--results",
+            "evals/results.json",
+        ],
         cwd=ROOT,
         capture_output=True,
         text=True,

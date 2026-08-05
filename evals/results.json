@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "skill_package_sha256": "d3e68aff4996af8862a0f5364c89f1b5359f891fb6c72c13649fa1c07c589f1c",
+  "results": [
+    {
+      "case_id": "bounded-correction",
+      "workflow_class": "HARNESS-FOCUSED-CHANGE",
+      "decision": "continue",
+      "active_spec": null,
+      "changed_scope": ["one internal parser defect"],
+      "verification": ["focused parser tests", "repository change gate"],
+      "residual_risk": ["parser edge cases outside the focused fixture"],
+      "reason": "The correction restores known behavior without changing a contract."
+    },
+    {
+      "case_id": "dev-cors-config",
+      "workflow_class": "HARNESS-FOCUSED-CHANGE",
+      "decision": "continue",
+      "active_spec": null,
+      "changed_scope": ["existing development CORS allowlist", "development deployment"],
+      "verification": ["focused config contract", "repository-selected profile; full release only if explicitly required", "deployment behavior smoke for allowed and unlisted origins"],
+      "residual_risk": ["external DockerHost latency is measured separately"],
+      "reason": "Approval and deployment do not turn an exact configuration correction into new semantics."
+    },
+    {
+      "case_id": "same-sha-evidence-reuse",
+      "workflow_class": "HARNESS-FOCUSED-CHANGE",
+      "decision": "continue",
+      "active_spec": null,
+      "changed_scope": ["deployment branch fast-forward to the already verified SHA"],
+      "verification": ["harnessctl evidence verify", "deployed revision and behavior smoke"],
+      "residual_risk": ["reuse fails closed if Git identity or verifier inputs differ"],
+      "reason": "The final commit is unchanged, so valid commit-bound evidence is reused."
+    },
+    {
+      "case_id": "api-semantic-change",
+      "workflow_class": "HARNESS-SPEC-FIRST-FEATURE",
+      "decision": "continue",
+      "active_spec": "specs/api/spec.md",
+      "changed_scope": ["public request schema", "validation semantics"],
+      "verification": ["contract tests", "candidate and release profiles"],
+      "residual_risk": ["client compatibility requires owner review"],
+      "reason": "The request intentionally changes public semantics."
+    },
+    {
+      "case_id": "read-only-incident",
+      "workflow_class": "HARNESS-VERIFICATION-INCIDENT",
+      "decision": "continue",
+      "active_spec": null,
+      "changed_scope": ["read-only logs and traces"],
+      "verification": ["reproduction evidence and findings"],
+      "residual_risk": ["no mutation or remediation is authorized"],
+      "reason": "The task asks for diagnosis rather than a behavior change."
+    },
+    {
+      "case_id": "harness-maintenance",
+      "workflow_class": "HARNESS-MAINTENANCE",
+      "decision": "continue",
+      "active_spec": null,
+      "changed_scope": ["duplicate Skill guidance", "Harness eval fixtures"],
+      "verification": ["Skill validation", "behavior evals", "net line budget"],
+      "residual_risk": ["project facts must remain in repository authority"],
+      "reason": "The change maintains Harness routing without product semantics."
+    },
+    {
+      "case_id": "ambiguous-money-semantics",
+      "workflow_class": "HARNESS-SPEC-FIRST-FEATURE",
+      "decision": "stop",
+      "active_spec": "specs/settlement/spec.md",
+      "changed_scope": ["settlement rounding contract"],
+      "verification": ["resolve owner contract before tests or implementation"],
+      "residual_risk": ["money movement would be ambiguous"],
+      "reason": "Authoritative settlement contracts conflict."
+    },
+    {
+      "case_id": "missing-approval",
+      "workflow_class": "HARNESS-FOCUSED-CHANGE",
+      "decision": "stop",
+      "active_spec": null,
+      "changed_scope": ["bounded development configuration deployment"],
+      "verification": ["focused config gate before deployment"],
+      "residual_risk": ["deployment remains unapplied"],
+      "reason": "Required deployment approval or authority is unavailable."
+    },
+    {
+      "case_id": "failed-gate",
+      "workflow_class": "HARNESS-FOCUSED-CHANGE",
+      "decision": "stop",
+      "active_spec": null,
+      "changed_scope": ["bounded correction closeout"],
+      "verification": ["rerun the failed repository gate after repair"],
+      "residual_risk": ["the correction is not ready"],
+      "reason": "A required gate failed."
+    }
+  ]
+}

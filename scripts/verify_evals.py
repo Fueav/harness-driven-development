@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -17,10 +18,23 @@ WORKFLOWS = {
     "HARNESS-VERIFICATION-INCIDENT",
     "HARNESS-MAINTENANCE",
 }
+SKILL_FILES = (
+    Path("plugins/harness-driven-development/skills/harness-driven-development/SKILL.md"),
+    Path("plugins/harness-driven-development/skills/harness-driven-development/agents/openai.yaml"),
+    Path("plugins/harness-driven-development/skills/harness-driven-development/references/checklists.md"),
+)
 
 
 def load(path: Path) -> object:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def skill_package_sha256(root: Path = ROOT) -> str:
+    digest = hashlib.sha256()
+    for relative in SKILL_FILES:
+        digest.update(relative.as_posix().encode("utf-8") + b"\0")
+        digest.update((root / relative).read_bytes() + b"\0")
+    return digest.hexdigest()
 
 
 def main() -> int:
@@ -61,6 +75,9 @@ def main() -> int:
             errors.append(f"{case_id}: scenario must be non-empty")
         if not isinstance(case["active_spec_required"], bool):
             errors.append(f"{case_id}: active_spec_required must be boolean")
+        phrases = case.get("verification_contains", [])
+        if not isinstance(phrases, list) or any(not isinstance(item, str) or not item for item in phrases):
+            errors.append(f"{case_id}: verification_contains must be strings")
 
     schema = load(EVALS / "result.schema.json")
     if not isinstance(schema, dict) or schema.get("type") != "object":
@@ -80,11 +97,20 @@ def main() -> int:
                     errors.append(f"repository workflow document is missing {workflow}")
 
     if args.results:
-        payload = load(args.results)
-        if not isinstance(payload, dict) or set(payload) != {"results"}:
-            errors.append("result payload must contain only results")
+        try:
+            payload = load(args.results)
+        except (OSError, json.JSONDecodeError) as error:
+            errors.append(f"cannot load eval results: {error}")
+            payload = {}
+        expected_payload_fields = {"schema_version", "skill_package_sha256", "results"}
+        if not isinstance(payload, dict) or set(payload) != expected_payload_fields:
+            errors.append("result payload has an invalid contract")
             results: list[dict] = []
         else:
+            if payload.get("schema_version") != 1:
+                errors.append("result payload has an invalid schema version")
+            if payload.get("skill_package_sha256") != skill_package_sha256():
+                errors.append("result payload has a stale skill package digest")
             results = payload.get("results", [])
             if not isinstance(results, list):
                 errors.append("results must be an array")
@@ -130,6 +156,10 @@ def main() -> int:
                     errors.append(f"{case_id}: {field} must be an array of strings")
             if not result["verification"]:
                 errors.append(f"{case_id}: verification handoff is empty")
+            verification_text = " ".join(result["verification"]).lower()
+            for phrase in expected.get("verification_contains", []):
+                if phrase.lower() not in verification_text:
+                    errors.append(f"{case_id}: verification is missing {phrase!r}")
 
     for error in sorted(set(errors)):
         print(f"FAIL: {error}", file=sys.stderr)

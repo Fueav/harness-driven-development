@@ -127,6 +127,15 @@ class ReleaseValidatorTests(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0, output)
             self.assertIn("Skill package must not contain symlinks", output)
 
+    def test_rejects_missing_behavior_results(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            checkout = self.copy_checkout(temp_dir)
+            (checkout / "evals/results.json").unlink(missing_ok=True)
+            result = self.run_validator(checkout)
+            output = result.stdout + result.stderr
+            self.assertNotEqual(result.returncode, 0, output)
+            self.assertIn("eval", output.lower())
+
 
 if __name__ == "__main__":
     unittest.main()

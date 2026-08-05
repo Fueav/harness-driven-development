@@ -19,7 +19,7 @@ Load only the section needed for the current phase.
 ## Closeout
 
 - Inspect status and diff; stage only task files.
-- Run focused verification and the repository's required Harness/release gate with fresh output.
+- Run focused verification and the repository-selected profile. Do not infer full release from deployment alone; reuse valid same-SHA evidence with `harnessctl evidence verify`.
 - Commit, push, merge, or deploy only within the user's authorization and repository branch rules.
 - For deployment, verify target lineage and deployed revision, then run documented health and behavior smoke checks.
 - Report artifact path when applicable, branch/commit actions actually completed, commands and results, deployment evidence, and residual risk.

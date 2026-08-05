@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import shutil
 import subprocess
@@ -11,8 +12,20 @@ import tempfile
 import unittest
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
+SKILL_FILES = (
+    Path("plugins/harness-driven-development/skills/harness-driven-development/SKILL.md"),
+    Path("plugins/harness-driven-development/skills/harness-driven-development/agents/openai.yaml"),
+    Path("plugins/harness-driven-development/skills/harness-driven-development/references/checklists.md"),
+)
+
+
+def skill_package_sha256(root: Path) -> str:
+    digest = hashlib.sha256()
+    for relative in SKILL_FILES:
+        digest.update(relative.as_posix().encode("utf-8") + b"\0")
+        digest.update((root / relative).read_bytes() + b"\0")
+    return digest.hexdigest()
 
 
 class EvalContractTests(unittest.TestCase):
@@ -33,6 +46,8 @@ class EvalContractTests(unittest.TestCase):
     def valid_results(self, checkout: Path) -> dict:
         cases = json.loads((checkout / "evals/cases.json").read_text())["cases"]
         return {
+            "schema_version": 1,
+            "skill_package_sha256": skill_package_sha256(checkout),
             "results": [
                 {
                     "case_id": case["id"],
@@ -40,7 +55,7 @@ class EvalContractTests(unittest.TestCase):
                     "decision": case["expected_decision"],
                     "active_spec": "specs/module/spec.md" if case["active_spec_required"] else None,
                     "changed_scope": ["declared task scope"],
-                    "verification": ["repository gate"],
+                    "verification": case.get("verification_contains", ["repository gate"]),
                     "residual_risk": ["none identified"],
                     "reason": case.get("reason_contains", "repository contract"),
                 }
@@ -93,6 +108,19 @@ class EvalContractTests(unittest.TestCase):
             output = result.stdout + result.stderr
             self.assertNotEqual(result.returncode, 0, output)
             self.assertIn("expected stop cause", output)
+
+    def test_rejects_stale_skill_package_results(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            checkout = self.copy_checkout(temp_dir)
+            payload = self.valid_results(checkout)
+            skill = checkout / "plugins/harness-driven-development/skills/harness-driven-development/SKILL.md"
+            skill.write_text(skill.read_text() + "\n")
+            path = checkout / "results.json"
+            path.write_text(json.dumps(payload) + "\n")
+            result = self.run_validator(checkout, "--results", str(path))
+            output = result.stdout + result.stderr
+            self.assertNotEqual(result.returncode, 0, output)
+            self.assertIn("stale skill package digest", output)
 
 
 if __name__ == "__main__":

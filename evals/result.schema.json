@@ -1,8 +1,10 @@
 {
   "type": "object",
   "additionalProperties": false,
-  "required": ["results"],
+  "required": ["schema_version", "skill_package_sha256", "results"],
   "properties": {
+    "schema_version": {"const": 1},
+    "skill_package_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "results": {
       "type": "array",
       "items": {
