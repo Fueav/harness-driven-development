@@ -71,6 +71,31 @@ class EvalContractTests(unittest.TestCase):
             result = self.run_validator(checkout, "--results", str(path))
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
+    def test_covers_incomplete_delivery_and_upgrade_handoff(self) -> None:
+        ids = {
+            case["id"]
+            for case in json.loads((ROOT / "evals/cases.json").read_text())["cases"]
+        }
+        self.assertTrue(
+            {"incomplete-template-delivery", "template-upgrade-request"}.issubset(ids)
+        )
+
+    def test_repository_check_runs_the_readiness_interface(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repository = Path(temp_dir)
+            (repository / "docs").mkdir()
+            (repository / "AGENTS.md").write_text("docs/harness-workflows.md\n")
+            (repository / "docs/harness-workflows.md").write_text(
+                "\n".join(sorted({
+                    "HARNESS-FOCUSED-CHANGE", "HARNESS-SPEC-FIRST-FEATURE",
+                    "HARNESS-VERIFICATION-INCIDENT", "HARNESS-MAINTENANCE",
+                })) + "\n"
+            )
+            result = self.run_validator(ROOT, "--repository", str(repository))
+            output = result.stdout + result.stderr
+            self.assertNotEqual(result.returncode, 0, output)
+            self.assertIn("repository readiness", output.lower())
+
     def test_rejects_wrong_route(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             checkout = self.copy_checkout(temp_dir)

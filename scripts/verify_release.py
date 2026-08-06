@@ -13,8 +13,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 NAME = "harness-driven-development"
 MARKETPLACE_NAME = "fueav-harness-development"
+UMBRELLA_NAME = "fueav-harness"
 PLUGIN = ROOT / "plugins" / NAME
 SKILL = PLUGIN / "skills" / NAME
+COMPATIBILITY = ROOT / "contracts" / "suite-compatibility.json"
+EXPECTED_COMPATIBILITY = {"schema_version": 1, "suite_contract_versions": [1]}
 
 
 def load_json(path: Path) -> dict:
@@ -94,14 +97,14 @@ def main() -> int:
     readme_path = ROOT / "README.md"
     readme_text = readme_path.read_text() if readme_path.exists() else ""
     for command in (
-        f"codex plugin marketplace add Fueav/{NAME}",
-        f"codex plugin add {NAME}@{MARKETPLACE_NAME}",
+        "codex plugin marketplace add Fueav/harness-plugins",
+        f"codex plugin add {NAME}@{UMBRELLA_NAME}",
         f"codex plugin remove {NAME}@{NAME}",
         f"codex plugin marketplace remove {NAME}",
-        f"codex plugin marketplace upgrade {MARKETPLACE_NAME}",
+        f"codex plugin marketplace upgrade {UMBRELLA_NAME}",
         f"claude plugin marketplace remove {NAME} --scope user",
-        f"claude plugin marketplace add Fueav/{NAME} --scope user",
-        f"claude plugin update {NAME}@{MARKETPLACE_NAME}",
+        "claude plugin marketplace add Fueav/harness-plugins --scope user",
+        f"claude plugin update {NAME}@{UMBRELLA_NAME}",
     ):
         require(command in readme_text, f"README must document: {command}", errors)
 
@@ -177,7 +180,11 @@ def main() -> int:
     require(len(skill_text.split()) <= 250, "SKILL.md exceeds 250 words", errors)
     require(f"name: {NAME}" in skill_text, "SKILL.md name is incorrect", errors)
     for token in (
-        "router, not as a second repository methodology",
+        "target's daily router, not as a second repository methodology",
+        "`harness/repository_verification.py ready` before routing",
+        "Template Delivery is incomplete",
+        "canonical Scaffold Source",
+        "Never invoke or install Harness Template Sync",
         "Read the nearest `AGENTS.md`",
         "lightest declared workflow",
         "semantic novelty",
@@ -186,7 +193,7 @@ def main() -> int:
         "## Stop Conditions",
         "## Evidence Contract",
     ):
-        require(token in skill_text, f"SKILL.md is missing router contract: {token}", errors)
+        require(token in skill_text, f"SKILL.md is missing readiness or router contract: {token}", errors)
 
     checklist_path = SKILL / "references" / "checklists.md"
     checklist_text = (
@@ -207,6 +214,14 @@ def main() -> int:
         else ""
     )
     require("$harness-driven-development" in openai_text, "OpenAI prompt must invoke the Skill", errors)
+    require("repository_verification.py ready" in openai_text, "OpenAI prompt must require readiness", errors)
+
+    require((ROOT / "docs/CONTRACT.md").is_file(), "missing docs/CONTRACT.md authority", errors)
+    try:
+        compatibility = load_json(COMPATIBILITY)
+        require(compatibility == EXPECTED_COMPATIBILITY, "suite compatibility manifest has an invalid contract", errors)
+    except ValueError as error:
+        errors.append(str(error))
 
     old_references = {
         "code-review-checklist.md",

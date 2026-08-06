@@ -1,34 +1,28 @@
 ---
 name: harness-driven-development
-description: Use for PRDs, behavior changes, release-sensitive fixes, incidents, refactors, or deployments in repositories that declare Harness workflows or release gates.
+description: Use for daily work inside a fully delivered Harness target repository.
 ---
 
 # Harness Driven Development
 
-Use this skill as a router, not as a second repository methodology.
+Use this Skill as the target's daily router, not as a second repository methodology.
 
 ## Start
 
-1. Read the nearest `AGENTS.md` and child instructions.
-2. Read the repository's Harness workflow document, usually `docs/harness-workflows.md`.
-3. Separate semantic novelty from approval, protected paths, deployment, or security; those controls alone never require a Specification.
-4. Select the lightest declared workflow. Use Focused for an exact correction, including approved dev config; use Spec-first only for new semantics or unresolved contract ambiguity.
-5. Select verification: run changed-path gates, one full release for a final SHA when required, then `harnessctl evidence verify` for reuse.
-6. Keep Specifications repository-specific and remove unfilled template sections. Before Harness maintenance, merge duplicate definitions.
-7. Follow repository artifacts, tests, approvals, release gates, and runbooks; load `references/checklists.md` only for that phase.
+1. From the target root, run `harness/repository_verification.py ready` before routing. If it is missing or fails, stop and report that Template Delivery is incomplete; direct a scaffold maintainer to start an explicit delivery from the canonical Scaffold Source.
+2. If the request itself is a cold start or template upgrade, stop before mutation with the same handoff. Never invoke or install Harness Template Sync.
+3. Read the nearest `AGENTS.md`, child instructions, and the repository's Harness workflow document.
+4. Separate semantic novelty from approval, protected paths, deployment, or security; those controls alone never require a Specification.
+5. Select the lightest declared workflow. Use Focused for an exact correction, including approved dev config; use Spec-first only for new semantics or unresolved contract ambiguity.
+6. Select proportional verification; reuse same-SHA evidence only through `harnessctl evidence verify`.
+7. Follow repository artifacts, tests, approvals, gates, branch rules, and runbooks. Load `references/checklists.md` only for the active phase.
 
-Repository instructions, approved specifications, contracts, runbooks, and tests define project facts. Do not restate them in generated artifacts.
+Target Harness maintenance is normal daily work and uses its declared maintenance workflow.
 
 ## Stop Conditions
 
-Stop and report when:
-
-- target behavior is ambiguous and choosing would change product, API, auth, money, data, security, or rollout semantics;
-- required human approval or deployment authority is missing;
-- authoritative sources conflict;
-- required tests or gates fail;
-- unrelated local changes would have to be overwritten, staged, or force-merged.
+Stop on ambiguous high-risk semantics, missing approval or authority, conflicting sources, failed gates, incomplete Template Delivery, or unrelated changes that would be overwritten or staged.
 
 ## Evidence Contract
 
-The final handoff names the repository-selected workflow, changed scope, verification results, and residual risk.
+Name the selected workflow, changed scope, exact verification, authorized Git or deployment actions completed, and residual risk.

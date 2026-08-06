@@ -1,7 +1,7 @@
 {
   "name": "harness-driven-development",
-  "version": "2.1.0",
-  "description": "Routes repository work through the repository's declared Harness workflow and release gates.",
+  "version": "3.0.0",
+  "description": "Routes daily target work after the repository-local readiness handoff passes.",
   "author": {
     "name": "Fueav",
     "url": "https://github.com/Fueav"

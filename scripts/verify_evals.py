@@ -6,6 +6,8 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
+import subprocess
 import sys
 from pathlib import Path
 
@@ -67,8 +69,10 @@ def main() -> int:
             continue
         ids.add(case_id)
         expected_by_id[case_id] = case
-        if case["expected_workflow"] not in WORKFLOWS:
+        if case["expected_workflow"] is not None and case["expected_workflow"] not in WORKFLOWS:
             errors.append(f"{case_id}: expected workflow is invalid")
+        if case["expected_workflow"] is None and case["expected_decision"] != "stop":
+            errors.append(f"{case_id}: a missing workflow must stop")
         if case["expected_decision"] not in {"continue", "stop"}:
             errors.append(f"{case_id}: expected decision is invalid")
         if not isinstance(case["scenario"], str) or not case["scenario"].strip():
@@ -85,6 +89,18 @@ def main() -> int:
 
     if args.repository:
         repository = args.repository.resolve()
+        readiness = repository / "harness/repository_verification.py"
+        if not readiness.is_file() or readiness.is_symlink():
+            errors.append("repository readiness interface is missing")
+        else:
+            runtime = os.environ.copy()
+            runtime["HARNESS_PROJECT_ROOT"] = str(repository)
+            result = subprocess.run(
+                [sys.executable, "-I", "-B", "-S", str(readiness), "ready"],
+                cwd=repository, env=runtime, capture_output=True, text=True, check=False,
+            )
+            if result.returncode:
+                errors.append("repository readiness failed: " + (result.stderr.strip() or "unknown error"))
         for relative in ("AGENTS.md", "docs/harness-workflows.md"):
             path = repository / relative
             if not path.is_file():

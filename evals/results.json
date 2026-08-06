@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "skill_package_sha256": "d3e68aff4996af8862a0f5364c89f1b5359f891fb6c72c13649fa1c07c589f1c",
+  "skill_package_sha256": "878250bfcbcf8b91651a4d43d8070bbf29ef3acb00834bea35d86aa07f660c58",
   "results": [
     {
       "case_id": "bounded-correction",
@@ -61,6 +61,26 @@
       "verification": ["Skill validation", "behavior evals", "net line budget"],
       "residual_risk": ["project facts must remain in repository authority"],
       "reason": "The change maintains Harness routing without product semantics."
+    },
+    {
+      "case_id": "incomplete-template-delivery",
+      "workflow_class": null,
+      "decision": "stop",
+      "active_spec": null,
+      "changed_scope": ["no target mutation"],
+      "verification": ["repository_verification.py ready failed", "scaffold maintainer must initiate delivery from the canonical Scaffold Source"],
+      "residual_risk": ["the target Repository Contract is incomplete"],
+      "reason": "Template Delivery is incomplete, so no daily workflow can be selected."
+    },
+    {
+      "case_id": "template-upgrade-request",
+      "workflow_class": null,
+      "decision": "stop",
+      "active_spec": null,
+      "changed_scope": ["no target mutation"],
+      "verification": ["a scaffold maintainer uses Harness Template Sync from the canonical Scaffold Source; do not invoke it from HDD"],
+      "residual_risk": ["the requested template upgrade remains unapplied"],
+      "reason": "Template upgrades begin only from the canonical Scaffold Source."
     },
     {
       "case_id": "ambiguous-money-semantics",

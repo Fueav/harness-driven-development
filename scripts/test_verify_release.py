@@ -136,6 +136,26 @@ class ReleaseValidatorTests(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0, output)
             self.assertIn("eval", output.lower())
 
+    def test_requires_versioned_suite_compatibility(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            checkout = self.copy_checkout(temp_dir)
+            (checkout / "contracts/suite-compatibility.json").unlink(missing_ok=True)
+            result = self.run_validator(checkout)
+            output = result.stdout + result.stderr
+            self.assertNotEqual(result.returncode, 0, output)
+            self.assertIn("suite-compatibility", output.lower())
+
+    def test_requires_readiness_first_without_sync_invocation(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            checkout = self.copy_checkout(temp_dir)
+            skill = checkout / "plugins" / NAME / "skills" / NAME / "SKILL.md"
+            text = skill.read_text().replace("repository_verification.py ready", "read instructions")
+            skill.write_text(text.replace("Never invoke Harness Template Sync", "Ask another Skill"))
+            result = self.run_validator(checkout)
+            output = result.stdout + result.stderr
+            self.assertNotEqual(result.returncode, 0, output)
+            self.assertIn("readiness", output.lower())
+
 
 if __name__ == "__main__":
     unittest.main()

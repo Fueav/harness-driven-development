@@ -1,4 +1,4 @@
 interface:
   display_name: "Harness Driven Development"
-  short_description: "Risk-proportional Harness workflow"
-  default_prompt: "Use $harness-driven-development to apply the repository's declared Harness workflow and release gates."
+  short_description: "Ready-target daily workflow"
+  default_prompt: "Use $harness-driven-development only after the target passes repository_verification.py ready, then apply its lightest declared Harness workflow."
