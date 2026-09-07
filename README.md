@@ -26,7 +26,7 @@ Work in the target repository and ask naturally:
 Use $harness-driven-development to implement this target-repository task.
 ```
 
-The Skill first runs `harness/repository_verification.py ready`. If readiness is missing or fails, or if the request is itself a template cold start or upgrade, it stops before mutation and asks a scaffold maintainer to initiate explicit Template Delivery from the canonical Scaffold Source. It never invokes Harness Template Sync.
+The Skill reads applicable repository instructions, then runs `harness/repository_verification.py ready` before routing. Missing or failed readiness, or a request for template cold start or upgrade, stops target mutation and hands off to a scaffold maintainer at the canonical Scaffold Source. It never invokes Harness Template Sync.
 
 ## Upgrade
 

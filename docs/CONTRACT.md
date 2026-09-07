@@ -1,6 +1,6 @@
 # Harness Driven Development Contract
 
-Status: v3.0 release contract
+Status: v3.1 release contract
 
 ## Decision
 
@@ -10,7 +10,7 @@ It does not cold-start or upgrade a repository. Harness Template Sync is an inde
 
 ## Entry contract
 
-Before reading task-routing policy, run target-local `harness/repository_verification.py ready` from the repository root.
+Read the nearest applicable instructions before executing target-local `harness/repository_verification.py ready` from the repository root; readiness still precedes task routing.
 
 - Success proves a supported suite contract, required files and executables, schema versions, current scaffold record, semantic path resolutions, managed symlinks, and retired-path absence.
 - A missing command or any failure stops routing. Report the exact readiness error and ask a scaffold maintainer to initiate an explicit Template Delivery from the canonical Scaffold Source.
@@ -22,11 +22,12 @@ Readiness is target-local and does not need the template checkout or either plug
 
 After readiness:
 
-1. Read nearest `AGENTS.md`, child instructions, the repository Harness workflow document, and task-relevant authority.
+1. Consult the repository Harness workflow document. Load further authority only when it affects the active decision.
 2. Separate semantic novelty from approval, protected paths, security, deployment, or file type. Those independent controls do not choose the workflow.
 3. Select the lightest declared workflow. New or intentionally changed semantics and unresolved contract ambiguity use the repository's Spec-first route; exact restoration and behavior-preserving work use its focused route.
-4. Follow target tests, gates, approvals, branch rules, runbooks, and deployment authority. Harness maintenance remains target work and uses the declared maintenance route.
-5. Close out with the selected workflow, changed scope, exact verification, Git/deployment actions actually authorized and completed, and residual risk.
+4. Derive completion from the requested outcome and follow repository recovery, verification, and branch rules through it. A first implementation does not finish requested validation or execution; an explicit pause still applies. Target Harness upkeep uses its maintenance route.
+5. A failed gate blocks promotion, while change-caused failures may be repaired within existing authorization. Missing authority or unresolved high-risk contracts stop the affected action after safe preparation; incomplete delivery still stops entry.
+6. Close out with the completed outcome, selected workflow, changed scope, exact verification, Git/deployment actions actually authorized and completed, and residual risk.
 
 Repository artifacts own project facts. The Skill contains routing and stop conditions, not a second methodology or copied target policy.
 
