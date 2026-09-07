@@ -33,7 +33,7 @@ The Skill reads applicable repository instructions, then runs `harness/repositor
 ```bash
 codex plugin marketplace upgrade fueav-harness
 codex plugin add harness-driven-development@fueav-harness
-claude plugin marketplace update fueav-harness --scope user
+claude plugin marketplace update fueav-harness
 claude plugin update harness-driven-development@fueav-harness
 ```
 
