@@ -256,6 +256,14 @@ def main() -> int:
         print(eval_contract.stderr, end="", file=sys.stderr)
         print("FAIL: deterministic eval contract failed", file=sys.stderr)
         return 1
+    behavior = subprocess.run(
+        [sys.executable, "scripts/run_behavior_evals.py", "verify", "--results", "evals/behavior-results.json"],
+        cwd=ROOT, capture_output=True, text=True, check=False,
+    )
+    if behavior.returncode:
+        print(behavior.stdout + behavior.stderr, file=sys.stderr)
+        print("FAIL: real-task behavior evidence failed", file=sys.stderr)
+        return 1
     print(f"release contract ok: {NAME} {version}")
     return 0
 

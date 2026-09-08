@@ -1,0 +1,199 @@
+{
+  "schema_version": 1,
+  "identity": {
+    "skill": "c2465a140aef29a06cab3c54e0c2832b57906ae52aeb1b7d6cad2f9ba83fd2b1",
+    "cases": "a9f7e58063b04bf0dd9f339bd4bebc07085555a8ab66d627fa0ff2174cf45007",
+    "runner": "4f3bb86a2d95e90b8786564b43dc9bf7a88ee137ee8bd75435fe5e99eade5b19",
+    "workflow": "f14a2a910240be61a71beaf14941e3592c6350ab07f0099a6647e38a99706a93"
+  },
+  "adapter": "codex exec",
+  "cli_version": "codex-cli 0.153.4",
+  "requested_model": "gpt-6-astra",
+  "requested_effort": "max",
+  "cases": [
+    {
+      "id": "continuity-and-pause",
+      "status": "passed",
+      "turns": [
+        {
+          "exit_code": 0,
+          "thread_id": "01a07fd1-fc90-73d1-9001-d568ede0a681",
+          "trace_sha256": "4bc6d06ff61e42f7d9c84b16f9e3a56e2ecf8239a8cf60bfc33f13d080c9459e",
+          "duration_seconds": 117.67,
+          "usage": {
+            "input_tokens": 160528,
+            "cached_input_tokens": 140928,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 2278,
+            "reasoning_output_tokens": 1445
+          }
+        },
+        {
+          "exit_code": 0,
+          "thread_id": "01a07fd1-fc90-73d1-9001-d568ede0a681",
+          "trace_sha256": "4859924ad41d12115f542f4975369575447f66f65027f937de9ab456f863e659",
+          "duration_seconds": 76.45,
+          "usage": {
+            "input_tokens": 161716,
+            "cached_input_tokens": 158848,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1048,
+            "reasoning_output_tokens": 560
+          }
+        }
+      ],
+      "failures": [],
+      "observed_events": [
+        {
+          "event": "check",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "id": "focused-config",
+      "status": "passed",
+      "turns": [
+        {
+          "exit_code": 0,
+          "thread_id": "01a07fd4-f3db-73e1-b5b1-f0cfba80f355",
+          "trace_sha256": "4913f179eb4e0a3f963e6d47a700f741946148ec74b68fc2182615fb3444af9e",
+          "duration_seconds": 107.62,
+          "usage": {
+            "input_tokens": 214982,
+            "cached_input_tokens": 195456,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1658,
+            "reasoning_output_tokens": 721
+          }
+        }
+      ],
+      "failures": [],
+      "observed_events": [
+        {
+          "event": "check",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "id": "authorized-repair",
+      "status": "passed",
+      "turns": [
+        {
+          "exit_code": 0,
+          "thread_id": "01a07fd6-9981-71c0-a385-c7fc220e1163",
+          "trace_sha256": "a79e3ef58881781e54e71b6149e2e7d188d7d63929839ce64810a0e057384fa5",
+          "duration_seconds": 127.79,
+          "usage": {
+            "input_tokens": 204373,
+            "cached_input_tokens": 187008,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 2321,
+            "reasoning_output_tokens": 1334
+          }
+        }
+      ],
+      "failures": [],
+      "observed_events": [
+        {
+          "event": "check",
+          "ok": false
+        },
+        {
+          "event": "check",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "id": "runtime-entrypoint",
+      "status": "passed",
+      "turns": [
+        {
+          "exit_code": 0,
+          "thread_id": "01a07fd8-8dd0-75e0-98fc-0dea97a86c15",
+          "trace_sha256": "d36721366afd83724443a427368ed7736a1859d92154eadb8cea20b7638143f6",
+          "duration_seconds": 118.24,
+          "usage": {
+            "input_tokens": 217192,
+            "cached_input_tokens": 196352,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 2183,
+            "reasoning_output_tokens": 1120
+          }
+        }
+      ],
+      "failures": [],
+      "observed_events": [
+        {
+          "event": "check",
+          "ok": true
+        },
+        {
+          "event": "cli"
+        }
+      ]
+    },
+    {
+      "id": "interface-probe",
+      "status": "passed",
+      "turns": [
+        {
+          "exit_code": 0,
+          "thread_id": "01a07fda-5ccc-7721-af3b-3d5aeb7d0b2a",
+          "trace_sha256": "36fa7ccc0a4d44809f019b8b67d6ba9d65a2cd77ca87e3e85b4ab4aaba236741",
+          "duration_seconds": 142.41,
+          "usage": {
+            "input_tokens": 258466,
+            "cached_input_tokens": 239744,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 2554,
+            "reasoning_output_tokens": 1433
+          }
+        }
+      ],
+      "failures": [],
+      "observed_events": [
+        {
+          "event": "vendor",
+          "adapter_exists": false
+        },
+        {
+          "event": "vendor",
+          "adapter_exists": false
+        },
+        {
+          "event": "vendor",
+          "adapter_exists": true
+        },
+        {
+          "event": "check",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "id": "read-only-answer",
+      "status": "passed",
+      "turns": [
+        {
+          "exit_code": 0,
+          "thread_id": "01a07fdc-8a66-7a31-ab55-d73850b9e6a5",
+          "trace_sha256": "1b09b266feb2565a7c6ca3e82e489ec50a58c9c557a8ff8edd57be6396a4a03c",
+          "duration_seconds": 44.79,
+          "usage": {
+            "input_tokens": 69255,
+            "cached_input_tokens": 55168,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 592,
+            "reasoning_output_tokens": 218
+          }
+        }
+      ],
+      "failures": [],
+      "observed_events": []
+    }
+  ],
+  "global_guidance_sha256": "d884f5a9f3a82a23db3f2afaee7ba8454c77e3b76a265e7575a29f0fbac4334b"
+}

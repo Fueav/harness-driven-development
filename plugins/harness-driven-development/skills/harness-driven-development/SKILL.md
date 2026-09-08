@@ -13,7 +13,7 @@ Use this Skill as the target's daily router, not as a second repository methodol
 2. If the request itself is a cold start or template upgrade, stop before mutation with the same handoff. Never invoke or install Harness Template Sync.
 3. After readiness, consult the repository workflow document; load further authority only for the active decision.
 4. Separate semantic novelty from permissions. Select the lightest declared workflow: Focused for exact corrections including approved dev config, Spec-first for new semantics or unresolved contracts, maintenance for target Harness upkeep.
-5. Define completion from the request and follow repository recovery and verification rules through that outcome. Reuse same-SHA release evidence only through `harnessctl evidence verify`. Load `references/checklists.md` only for the active phase.
+5. Follow the repository's outcome tracking, recovery, and verification contract across turns. Reuse same-SHA release evidence only through `harnessctl evidence verify`. Load `references/checklists.md` only for the active phase.
 
 ## Stop Conditions
 

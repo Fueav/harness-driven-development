@@ -67,8 +67,8 @@ The per-repository `fueav-harness-development` marketplace remains independently
 ```bash
 python3 scripts/test_verify_release.py
 python3 scripts/verify_release.py
-python3 scripts/test_verify_evals.py
-python3 scripts/verify_evals.py --results evals/results.json --repository /path/to/delivered-harness-target
+python3 scripts/test_verify_evals.py && python3 scripts/test_behavior_evals.py
+python3 scripts/run_behavior_evals.py run --repository /path/to/delivered-harness-target --output /path/to/new-evidence-directory
 CODEX_PYTHON="${CODEX_PYTHON:-python3}"
 CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
 "$CODEX_PYTHON" "$CODEX_HOME/skills/.system/plugin-creator/scripts/validate_plugin.py" plugins/harness-driven-development
@@ -77,7 +77,7 @@ claude plugin validate plugins/harness-driven-development --strict
 claude plugin validate . --strict
 ```
 
-Release validation binds checked-in routing results to the Skill package digest. The full authority is in [`docs/CONTRACT.md`](docs/CONTRACT.md); three-repository composition is proven by the canonical Scaffold Source.
+After successful real-task evaluation, copy its results.json to evals/behavior-results.json. Release validation checks its Skill/runner/case identity; Scaffold Source suite verification also checks the evaluated workflow identity. Results include trace digests, observations, and usage; this is a regression sample, not a guarantee across future models. See [`docs/CONTRACT.md`](docs/CONTRACT.md).
 
 ## Roll back to v2
 

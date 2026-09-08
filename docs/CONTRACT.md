@@ -1,6 +1,6 @@
 # Harness Driven Development Contract
 
-Status: v3.1 release contract
+Status: v3.2 release contract
 
 ## Decision
 
@@ -25,11 +25,11 @@ After readiness:
 1. Consult the repository Harness workflow document. Load further authority only when it affects the active decision.
 2. Separate semantic novelty from approval, protected paths, security, deployment, or file type. Those independent controls do not choose the workflow.
 3. Select the lightest declared workflow. New or intentionally changed semantics and unresolved contract ambiguity use the repository's Spec-first route; exact restoration and behavior-preserving work use its focused route.
-4. Derive completion from the requested outcome and follow repository recovery, verification, and branch rules through it. A first implementation does not finish requested validation or execution; an explicit pause still applies. Target Harness upkeep uses its maintenance route.
+4. Follow the repository's outcome tracking, recovery, verification, and branch rules across turns. Reconcile accepted corrections and remaining outcomes before closeout; an explicit pause still applies. Target Harness upkeep uses its maintenance route.
 5. A failed gate blocks promotion, while change-caused failures may be repaired within existing authorization. Missing authority or unresolved high-risk contracts stop the affected action after safe preparation; incomplete delivery still stops entry.
 6. Close out with the completed outcome, selected workflow, changed scope, exact verification, Git/deployment actions actually authorized and completed, and residual risk.
 
-Repository artifacts own project facts. The Skill contains routing and stop conditions, not a second methodology or copied target policy.
+Repository artifacts own project facts. The Skill contains routing and stop conditions. Release validation requires six executed fixture cases bound to the Skill, runner, cases, and repository workflow; static routing results alone are insufficient. Raw traces stay in the operator-selected evidence directory.
 
 ## Distribution
 
