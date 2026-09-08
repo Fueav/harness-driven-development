@@ -2,8 +2,8 @@
   "schema_version": 1,
   "identity": {
     "skill": "c2465a140aef29a06cab3c54e0c2832b57906ae52aeb1b7d6cad2f9ba83fd2b1",
-    "cases": "a9f7e58063b04bf0dd9f339bd4bebc07085555a8ab66d627fa0ff2174cf45007",
-    "runner": "4f3bb86a2d95e90b8786564b43dc9bf7a88ee137ee8bd75435fe5e99eade5b19",
+    "cases": "f0e3189c0cbcd1affcf3ccd2fda606347f5f8c4cd8a80835fc7d8b4c14a8dd64",
+    "runner": "75993d4ce13c8d70763dbf85f2da62f657dc10a39f29a652a1e9bdcfbbceb768",
     "workflow": "f14a2a910240be61a71beaf14941e3592c6350ab07f0099a6647e38a99706a93"
   },
   "adapter": "codex exec",
@@ -17,28 +17,30 @@
       "turns": [
         {
           "exit_code": 0,
-          "thread_id": "01a07fd1-fc90-73d1-9001-d568ede0a681",
-          "trace_sha256": "4bc6d06ff61e42f7d9c84b16f9e3a56e2ecf8239a8cf60bfc33f13d080c9459e",
-          "duration_seconds": 117.67,
+          "thread_id": "01a07fef-1831-7480-9de3-07808999adf9",
+          "trace_sha256": "015436680a7ff1487f02ef8b403f4ccc2ea693e644aa97b9d4b06b540bbd0c1c",
+          "execution_events": [],
+          "duration_seconds": 77.12,
           "usage": {
-            "input_tokens": 160528,
-            "cached_input_tokens": 140928,
+            "input_tokens": 157362,
+            "cached_input_tokens": 138624,
             "cache_write_input_tokens": 0,
-            "output_tokens": 2278,
-            "reasoning_output_tokens": 1445
+            "output_tokens": 1408,
+            "reasoning_output_tokens": 717
           }
         },
         {
           "exit_code": 0,
-          "thread_id": "01a07fd1-fc90-73d1-9001-d568ede0a681",
-          "trace_sha256": "4859924ad41d12115f542f4975369575447f66f65027f937de9ab456f863e659",
-          "duration_seconds": 76.45,
+          "thread_id": "01a07fef-1831-7480-9de3-07808999adf9",
+          "trace_sha256": "b3b8b4c852039f66d031128b362a004653d1620d1293a76efd388ce216b43935",
+          "execution_events": [],
+          "duration_seconds": 71.71,
           "usage": {
-            "input_tokens": 161716,
-            "cached_input_tokens": 158848,
+            "input_tokens": 156373,
+            "cached_input_tokens": 153600,
             "cache_write_input_tokens": 0,
-            "output_tokens": 1048,
-            "reasoning_output_tokens": 560
+            "output_tokens": 862,
+            "reasoning_output_tokens": 414
           }
         }
       ],
@@ -56,15 +58,16 @@
       "turns": [
         {
           "exit_code": 0,
-          "thread_id": "01a07fd4-f3db-73e1-b5b1-f0cfba80f355",
-          "trace_sha256": "4913f179eb4e0a3f963e6d47a700f741946148ec74b68fc2182615fb3444af9e",
-          "duration_seconds": 107.62,
+          "thread_id": "01a07ff1-5ef0-7182-96fa-067a07aea37c",
+          "trace_sha256": "ef583b5a510f9de40369eb78a01b1c6d17e49c6a5e0b271d8f9abb829f07a880",
+          "execution_events": [],
+          "duration_seconds": 113.46,
           "usage": {
-            "input_tokens": 214982,
-            "cached_input_tokens": 195456,
+            "input_tokens": 213096,
+            "cached_input_tokens": 193792,
             "cache_write_input_tokens": 0,
-            "output_tokens": 1658,
-            "reasoning_output_tokens": 721
+            "output_tokens": 1705,
+            "reasoning_output_tokens": 900
           }
         }
       ],
@@ -82,15 +85,16 @@
       "turns": [
         {
           "exit_code": 0,
-          "thread_id": "01a07fd6-9981-71c0-a385-c7fc220e1163",
-          "trace_sha256": "a79e3ef58881781e54e71b6149e2e7d188d7d63929839ce64810a0e057384fa5",
-          "duration_seconds": 127.79,
+          "thread_id": "01a07ff3-1b75-7cd1-8d72-ba119883ffaf",
+          "trace_sha256": "845608f77ec528be032347c919da7911505aee747f7ee8efaeeef0a24d7b4737",
+          "execution_events": [],
+          "duration_seconds": 108.91,
           "usage": {
-            "input_tokens": 204373,
-            "cached_input_tokens": 187008,
+            "input_tokens": 226923,
+            "cached_input_tokens": 198144,
             "cache_write_input_tokens": 0,
-            "output_tokens": 2321,
-            "reasoning_output_tokens": 1334
+            "output_tokens": 1710,
+            "reasoning_output_tokens": 824
           }
         }
       ],
@@ -112,15 +116,22 @@
       "turns": [
         {
           "exit_code": 0,
-          "thread_id": "01a07fd8-8dd0-75e0-98fc-0dea97a86c15",
-          "trace_sha256": "d36721366afd83724443a427368ed7736a1859d92154eadb8cea20b7638143f6",
-          "duration_seconds": 118.24,
+          "thread_id": "01a07ff4-c5fa-7cc2-943b-2de2537d3f63",
+          "trace_sha256": "51c5c2066ecd595bdb9de7874e0e4aed3c63c61205916862618e436b55bb0ee2",
+          "execution_events": [
+            {
+              "event": "cli",
+              "ok": true,
+              "source": "runtime trace"
+            }
+          ],
+          "duration_seconds": 123.82,
           "usage": {
-            "input_tokens": 217192,
-            "cached_input_tokens": 196352,
+            "input_tokens": 241464,
+            "cached_input_tokens": 209024,
             "cache_write_input_tokens": 0,
-            "output_tokens": 2183,
-            "reasoning_output_tokens": 1120
+            "output_tokens": 2300,
+            "reasoning_output_tokens": 1242
           }
         }
       ],
@@ -131,7 +142,9 @@
           "ok": true
         },
         {
-          "event": "cli"
+          "event": "cli",
+          "ok": true,
+          "source": "runtime trace"
         }
       ]
     },
@@ -141,15 +154,16 @@
       "turns": [
         {
           "exit_code": 0,
-          "thread_id": "01a07fda-5ccc-7721-af3b-3d5aeb7d0b2a",
-          "trace_sha256": "36fa7ccc0a4d44809f019b8b67d6ba9d65a2cd77ca87e3e85b4ab4aaba236741",
-          "duration_seconds": 142.41,
+          "thread_id": "01a07ff6-aae1-7400-9c33-fdad65b48d22",
+          "trace_sha256": "f4439b5978871228bbba94da0d37e2d850b3c3b81b63b02869d4a844c581c1da",
+          "execution_events": [],
+          "duration_seconds": 178.28,
           "usage": {
-            "input_tokens": 258466,
-            "cached_input_tokens": 239744,
+            "input_tokens": 262755,
+            "cached_input_tokens": 243200,
             "cache_write_input_tokens": 0,
-            "output_tokens": 2554,
-            "reasoning_output_tokens": 1433
+            "output_tokens": 2921,
+            "reasoning_output_tokens": 1679
           }
         }
       ],
@@ -157,14 +171,26 @@
       "observed_events": [
         {
           "event": "vendor",
+          "ok": false,
+          "count": 7,
           "adapter_exists": false
         },
         {
           "event": "vendor",
+          "ok": true,
+          "count": 7,
           "adapter_exists": false
         },
         {
           "event": "vendor",
+          "ok": true,
+          "count": 8498,
+          "adapter_exists": true
+        },
+        {
+          "event": "vendor",
+          "ok": true,
+          "count": 228494,
           "adapter_exists": true
         },
         {
@@ -179,15 +205,16 @@
       "turns": [
         {
           "exit_code": 0,
-          "thread_id": "01a07fdc-8a66-7a31-ab55-d73850b9e6a5",
-          "trace_sha256": "1b09b266feb2565a7c6ca3e82e489ec50a58c9c557a8ff8edd57be6396a4a03c",
-          "duration_seconds": 44.79,
+          "thread_id": "01a07ff9-64cb-7361-9bdd-71eb69ee5052",
+          "trace_sha256": "9cec78e395895d9b460163dcecba6b38b53c3b9d35a0ee7df11fb16e1260e7fd",
+          "execution_events": [],
+          "duration_seconds": 56.41,
           "usage": {
-            "input_tokens": 69255,
-            "cached_input_tokens": 55168,
+            "input_tokens": 124538,
+            "cached_input_tokens": 95232,
             "cache_write_input_tokens": 0,
-            "output_tokens": 592,
-            "reasoning_output_tokens": 218
+            "output_tokens": 757,
+            "reasoning_output_tokens": 263
           }
         }
       ],

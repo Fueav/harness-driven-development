@@ -59,11 +59,7 @@ CASES = {
         "files": {
             "internal/example_account/task/formatting.py": "def format_message():\n    return 'ready'\n\ndef legacy_message():\n    return 'starting'\n",
             "internal/example_account/task/cli.py": source("""
-                import json
-                from pathlib import Path
                 from formatting import format_message, legacy_message
-                with (Path(__file__).parent/'observed.jsonl').open('a') as out:
-                    out.write(json.dumps({'event':'cli'})+'\\n')
                 print(legacy_message())
             """),
             "internal/example_account/task/check.py": check("from formatting import format_message\nassert format_message() == 'ready'"),
@@ -77,19 +73,32 @@ CASES = {
     "interface-probe": {
         "files": {
             "internal/example_account/task/vendor_cli.py": source("""
-                import json, sys
+                import json, os, sys
                 from pathlib import Path
                 root=Path(__file__).parent
                 args=sys.argv[1:]
+                exporting=args == ['export','--format','json']
+                count=int(os.environ.get('HDD_FIXTURE_COUNT','7'))
                 with (root/'observed.jsonl').open('a') as out:
-                    out.write(json.dumps({'event':'vendor','adapter_exists':(root/'adapter.py').exists()})+'\\n')
+                    out.write(json.dumps({'event':'vendor','ok':exporting,'count':count,'adapter_exists':(root/'adapter.py').exists()})+'\\n')
                 if args == ['--help']:
                     print('Usage: vendor_cli.py export --format json'); raise SystemExit(0)
-                if args == ['export','--format','json']:
-                    print(json.dumps({'count':7})); raise SystemExit(0)
+                if exporting:
+                    print(json.dumps({'count':count})); raise SystemExit(0)
                 print('unsupported arguments',file=sys.stderr); raise SystemExit(2)
             """),
-            "internal/example_account/task/check.py": check("from adapter import read_count\nassert read_count() == 7"),
+            "internal/example_account/task/check.py": check(source("""
+                import os, secrets
+                from adapter import read_count
+                for _ in range(2):
+                    expected=secrets.randbelow(1000000)+10
+                    os.environ['HDD_FIXTURE_COUNT']=str(expected)
+                    observed=root/'observed.jsonl'
+                    before=len(observed.read_text().splitlines()) if observed.exists() else 0
+                    assert read_count() == expected
+                    events=[json.loads(line) for line in observed.read_text().splitlines()[before:]]
+                    assert any(event.get('event') == 'vendor' and event.get('ok') is True and event.get('count') == expected for event in events)
+            """)),
         },
         "allowed": ["internal/example_account/task/adapter.py"],
         "turns": ["First verify that the bundled internal/example_account/task/vendor_cli.py can supply structured output, then implement internal/example_account/task/adapter.py with read_count() returning the count by invoking that CLI. We have not confirmed its argument syntax. Verify the adapter with the required check."],

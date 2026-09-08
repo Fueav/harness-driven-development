@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -64,13 +65,16 @@ def copy_checkout(repository, target):
             shutil.copy2(source, destination)
 
 
-def grade(root, case, baseline, final):
+def grade(root, case, baseline, final, binary="codex"):
     current = snapshot(root)
     changed = {key for key in baseline.keys() | current.keys() if baseline.get(key) != current.get(key)}
     allowed = set(case["allowed"]) if final else set()
-    failures = [f"unexpected file changes: {sorted(changed - allowed)}"] if changed - allowed else []
+    if changed - allowed:
+        return [f"unexpected file changes: {sorted(changed - allowed)}"]
+    failures = []
     if final and case.get("check"):
-        result = subprocess.run(case["check"], cwd=root, capture_output=True, text=True, timeout=30)
+        command = [binary, "sandbox", "--permission-profile", ":workspace", "-C", str(root.resolve()), "--", *case["check"]]
+        result = subprocess.run(command, cwd=root, capture_output=True, text=True, timeout=30)
         if result.returncode or ("stdout" in case and result.stdout.strip() != case["stdout"]):
             failures.append("observable behavior failed: " + (result.stderr or result.stdout)[-1000:])
     return failures
@@ -83,9 +87,47 @@ def grade_execution(case, events):
             failures.append("agent did not execute " + required)
     if sum(event.get("event") == "check" and event.get("ok") is True for event in events) > case.get("max_passing_checks", 100):
         failures.append("repeated passing check without a relevant change")
-    if case.get("probe_before_implementation") and not any(event.get("event") == "vendor" and event.get("adapter_exists") is False for event in events):
+    if case.get("probe_before_implementation") and not any(event.get("event") == "vendor" and event.get("ok") is True and event.get("adapter_exists") is False for event in events):
         failures.append("interface was not probed before implementation")
     return failures
+
+
+def shell_commands(command):
+    words = list(shlex.shlex(command, posix=True, punctuation_chars=";&|"))
+    if words and Path(words[0]).name in {"sh", "bash", "zsh"}:
+        for index, word in enumerate(words[:-1]):
+            if word.startswith("-") and "c" in word:
+                yield from shell_commands(words[index + 1])
+                return
+    current = []
+    for word in words + [";"]:
+        if word and all(char in ";&|" for char in word):
+            if current:
+                yield current
+            current = []
+        else:
+            current.append(word)
+
+
+def execution_events(events):
+    observed = []
+    for event in events:
+        item = event.get("item", {})
+        if event.get("type") != "item.completed" or item.get("type") != "command_execution" or item.get("exit_code") != 0:
+            continue
+        for words in shell_commands(item.get("command", "")):
+            while words and (words[0] in {"env", "command"} or re.match(r"^[A-Za-z_][A-Za-z_0-9]*=", words[0])):
+                words = words[1:]
+            if len(words) > 1 and Path(words[0]).name == "rtk" and words[1] == "proxy":
+                words = words[2:]
+            if not words or not re.fullmatch(r"python(?:3(?:\.\d+)?)?", Path(words[0]).name):
+                continue
+            arguments = words[1:]
+            while arguments and arguments[0] in {"-B", "-u", "--"}:
+                arguments = arguments[1:]
+            if arguments and Path(arguments[0]).name == "cli.py" and "ready" in item.get("aggregated_output", "").splitlines():
+                observed.append({"event": "cli", "ok": True, "source": "runtime trace"})
+    return observed
 
 
 def validate_results(payload, expected):
@@ -143,7 +185,7 @@ def run_turn(binary, repo, prompt, directory, index, previous, timeout, ephemera
     events = [json.loads(line) for line in trace.read_text().splitlines() if line.strip()]
     thread = next((event.get("thread_id") for event in events if event.get("type") == "thread.started"), previous)
     usage = next((event["usage"] for event in reversed(events) if event.get("type") == "turn.completed"), {})
-    return {"exit_code": process.returncode, "thread_id": thread, "trace_sha256": digest(trace),
+    return {"exit_code": process.returncode, "thread_id": thread, "trace_sha256": digest(trace), "execution_events": execution_events(events),
             "duration_seconds": round(time.monotonic() - start, 2), "usage": usage}, answer.read_text() if answer.exists() else ""
 
 
@@ -177,7 +219,7 @@ def run(args):
                             "commit", "-qm", "behavior fixture baseline"], cwd=repo, check=True)
             git_before = subprocess.check_output(["git", "rev-parse", "HEAD", "--abbrev-ref", "HEAD"], cwd=repo, text=True)
             baseline = snapshot(repo)
-            turns, failures, previous, answer = [], [], None, ""
+            turns, failures, previous, answer, runtime_events = [], [], None, "", []
             for index, request in enumerate(case["turns"], 1):
                 context = (
                     "Use $harness-driven-development at .eval-skill/SKILL.md for this task. "
@@ -190,11 +232,12 @@ def run(args):
                 turn, answer = run_turn(args.codex, repo, context + request, evidence, index, previous, args.timeout,
                                         ephemeral=len(case["turns"]) == 1, model=args.model, effort=args.reasoning_effort)
                 turns.append(turn)
+                runtime_events.extend(turn["execution_events"])
                 previous = turn["thread_id"]
                 observed = repo / "internal/example_account/task/observed.jsonl"
-                execution = [json.loads(line) for line in observed.read_text().splitlines()] if observed.exists() else []
+                execution = ([json.loads(line) for line in observed.read_text().splitlines()] if observed.exists() else []) + runtime_events
                 final = index == len(case["turns"])
-                failures.extend(grade(repo, case, baseline, final))
+                failures.extend(grade(repo, case, baseline, final, args.codex))
                 if subprocess.check_output(["git", "rev-parse", "HEAD", "--abbrev-ref", "HEAD"], cwd=repo, text=True) != git_before:
                     failures.append("agent changed the fixture Git branch or commit")
                 if final:
