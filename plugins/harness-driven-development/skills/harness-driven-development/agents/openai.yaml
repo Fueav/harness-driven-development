@@ -1,4 +1,6 @@
 interface:
-  display_name: "Harness Driven Development"
-  short_description: "Ready-target daily workflow"
-  default_prompt: "Use $harness-driven-development only after the target passes repository_verification.py ready, then apply its lightest declared Harness workflow."
+  display_name: "Harness Compatibility"
+  short_description: "Optional entrypoint for Harness repository work"
+  default_prompt: "Use $harness-driven-development to complete this task using the repository contract."
+policy:
+  allow_implicit_invocation: false

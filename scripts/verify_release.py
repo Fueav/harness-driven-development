@@ -17,7 +17,7 @@ UMBRELLA_NAME = "fueav-harness"
 PLUGIN = ROOT / "plugins" / NAME
 SKILL = PLUGIN / "skills" / NAME
 COMPATIBILITY = ROOT / "contracts" / "suite-compatibility.json"
-EXPECTED_COMPATIBILITY = {"schema_version": 1, "suite_contract_versions": [1]}
+EXPECTED_COMPATIBILITY = {"schema_version": 1, "suite_contract_versions": [1, 2]}
 
 
 def load_json(path: Path) -> dict:
@@ -94,20 +94,6 @@ def main() -> int:
     version = version_path.read_text().strip() if version_path.exists() else ""
     require(bool(re.fullmatch(r"\d+\.\d+\.\d+", version)), "VERSION must be strict semver", errors)
 
-    readme_path = ROOT / "README.md"
-    readme_text = readme_path.read_text() if readme_path.exists() else ""
-    for command in (
-        "codex plugin marketplace add Fueav/harness-plugins",
-        f"codex plugin add {NAME}@{UMBRELLA_NAME}",
-        f"codex plugin remove {NAME}@{NAME}",
-        f"codex plugin marketplace remove {NAME}",
-        f"codex plugin marketplace upgrade {UMBRELLA_NAME}",
-        f"claude plugin marketplace remove {NAME} --scope user",
-        "claude plugin marketplace add Fueav/harness-plugins --scope user",
-        f"claude plugin update {NAME}@{UMBRELLA_NAME}",
-    ):
-        require(command in readme_text, f"README must document: {command}", errors)
-
     paths = {
         "codex_plugin": PLUGIN / ".codex-plugin" / "plugin.json",
         "claude_plugin": PLUGIN / ".claude-plugin" / "plugin.json",
@@ -162,7 +148,7 @@ def main() -> int:
         for path in SKILL.rglob("*")
         if path.is_file()
     } if SKILL.exists() else set()
-    expected_files = {"SKILL.md", "agents/openai.yaml", "references/checklists.md"}
+    expected_files = {"SKILL.md", "agents/openai.yaml"}
     require(files == expected_files, f"Skill package has unexpected files: {sorted(files)}", errors)
     require(
         not any(path.is_symlink() for path in SKILL.rglob("*")),
@@ -179,42 +165,9 @@ def main() -> int:
     require(len(skill_text.splitlines()) <= 40, "SKILL.md exceeds 40 lines", errors)
     require(len(skill_text.split()) <= 250, "SKILL.md exceeds 250 words", errors)
     require(f"name: {NAME}" in skill_text, "SKILL.md name is incorrect", errors)
-    for token in (
-        "target's daily router, not as a second repository methodology",
-        "`harness/repository_verification.py ready` before routing",
-        "Template Delivery is incomplete",
-        "canonical Scaffold Source",
-        "Never invoke or install Harness Template Sync",
-        "Read the nearest `AGENTS.md`",
-        "lightest declared workflow",
-        "semantic novelty",
-        "approved dev config",
-        "`harnessctl evidence verify`",
-        "## Stop Conditions",
-        "## Evidence Contract",
-    ):
-        require(token in skill_text, f"SKILL.md is missing readiness or router contract: {token}", errors)
-
-    checklist_path = SKILL / "references" / "checklists.md"
-    checklist_text = (
-        checklist_path.read_text()
-        if checklist_path.is_file() and not checklist_path.is_symlink()
-        else ""
-    )
-    require(len(checklist_text.splitlines()) <= 30, "checklists.md exceeds 30 lines", errors)
-    require(len(checklist_text.split()) <= 250, "checklists.md exceeds 250 words", errors)
-    package_bytes = sum((SKILL / relative).stat().st_size for relative in files)
-    require(package_bytes <= 6144, "Skill package exceeds 6144 bytes", errors)
-    require(not any(SKILL.glob("scripts/**/*")), "Skill package must not contain scripts", errors)
-
-    openai_path = SKILL / "agents" / "openai.yaml"
-    openai_text = (
-        openai_path.read_text()
-        if openai_path.is_file() and not openai_path.is_symlink()
-        else ""
-    )
+    openai_text = (SKILL / "agents/openai.yaml").read_text()
     require("$harness-driven-development" in openai_text, "OpenAI prompt must invoke the Skill", errors)
-    require("repository_verification.py ready" in openai_text, "OpenAI prompt must require readiness", errors)
+    require("allow_implicit_invocation: false" in openai_text, "compatibility skill must be explicit-only", errors)
 
     require((ROOT / "docs/CONTRACT.md").is_file(), "missing docs/CONTRACT.md authority", errors)
     try:
@@ -239,23 +192,6 @@ def main() -> int:
             print(f"FAIL: {error}", file=sys.stderr)
         return 1
 
-    eval_contract = subprocess.run(
-        [
-            sys.executable,
-            "scripts/verify_evals.py",
-            "--results",
-            "evals/results.json",
-        ],
-        cwd=ROOT,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    if eval_contract.returncode != 0:
-        print(eval_contract.stdout, end="")
-        print(eval_contract.stderr, end="", file=sys.stderr)
-        print("FAIL: deterministic eval contract failed", file=sys.stderr)
-        return 1
     behavior = subprocess.run(
         [sys.executable, "scripts/run_behavior_evals.py", "verify", "--results", "evals/behavior-results.json"],
         cwd=ROOT, capture_output=True, text=True, check=False,

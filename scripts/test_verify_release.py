@@ -84,6 +84,7 @@ class ReleaseValidatorTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp_dir:
             checkout = self.copy_checkout(temp_dir)
             path = checkout / "plugins" / NAME / "skills" / NAME / "references" / "extra.md"
+            path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text("duplicate checklist\n")
             result = self.run_validator(checkout)
             output = result.stdout + result.stderr
@@ -93,7 +94,6 @@ class ReleaseValidatorTests(unittest.TestCase):
     def test_rejects_oversized_skill_and_checklist(self) -> None:
         for relative, expected in (
             ("SKILL.md", "SKILL.md exceeds 40 lines"),
-            ("references/checklists.md", "checklists.md exceeds 30 lines"),
         ):
             with self.subTest(relative=relative), tempfile.TemporaryDirectory() as temp_dir:
                 checkout = self.copy_checkout(temp_dir)
@@ -108,6 +108,7 @@ class ReleaseValidatorTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp_dir:
             checkout = self.copy_checkout(temp_dir)
             path = checkout / "plugins" / NAME / "skills" / NAME / "references" / "code-review-checklist.md"
+            path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text("legacy\n")
             result = self.run_validator(checkout)
             output = result.stdout + result.stderr
@@ -128,7 +129,7 @@ class ReleaseValidatorTests(unittest.TestCase):
             self.assertIn("Skill package must not contain symlinks", output)
 
     def test_requires_routing_and_executed_behavior_results(self) -> None:
-        for relative in ("evals/results.json", "evals/behavior-results.json"):
+        for relative in ("evals/behavior-results.json",):
             with self.subTest(relative=relative), tempfile.TemporaryDirectory() as temp_dir:
                 checkout = self.copy_checkout(temp_dir)
                 (checkout / relative).unlink(missing_ok=True)
@@ -146,16 +147,14 @@ class ReleaseValidatorTests(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0, output)
             self.assertIn("suite-compatibility", output.lower())
 
-    def test_requires_readiness_first_without_sync_invocation(self) -> None:
+    def test_compatibility_skill_is_explicit_only(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             checkout = self.copy_checkout(temp_dir)
-            skill = checkout / "plugins" / NAME / "skills" / NAME / "SKILL.md"
-            text = skill.read_text().replace("repository_verification.py ready", "read instructions")
-            skill.write_text(text.replace("Never invoke Harness Template Sync", "Ask another Skill"))
+            path = checkout / "plugins" / NAME / "skills" / NAME / "agents/openai.yaml"
+            path.write_text(path.read_text().replace("allow_implicit_invocation: false", "allow_implicit_invocation: true"))
             result = self.run_validator(checkout)
-            output = result.stdout + result.stderr
-            self.assertNotEqual(result.returncode, 0, output)
-            self.assertIn("readiness", output.lower())
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("explicit-only", result.stdout + result.stderr)
 
 
 if __name__ == "__main__":

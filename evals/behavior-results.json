@@ -1,46 +1,122 @@
 {
   "schema_version": 1,
   "identity": {
-    "skill": "c2465a140aef29a06cab3c54e0c2832b57906ae52aeb1b7d6cad2f9ba83fd2b1",
-    "cases": "f0e3189c0cbcd1affcf3ccd2fda606347f5f8c4cd8a80835fc7d8b4c14a8dd64",
-    "runner": "75993d4ce13c8d70763dbf85f2da62f657dc10a39f29a652a1e9bdcfbbceb768",
-    "workflow": "f14a2a910240be61a71beaf14941e3592c6350ab07f0099a6647e38a99706a93"
+    "skill": "3aa434a646d8e80f241a0893a6d8a5b079d5a7e8376450897fc4fa63ae13003d",
+    "cases": "3f018ca74614e433207ef73e87c5fa961e68ad75f30e6f28463daca194c01059",
+    "runner": "ca8a544413d3bd4e783ae0f2cfa12a6072d6e3b20279932c2470460ee2fa923d",
+    "workflow": "360299e27d8bc1221f000325804daf449b56f67ec8a0ebdb90a974fc1f8bd998"
   },
   "adapter": "codex exec",
-  "cli_version": "codex-cli 0.153.4",
+  "cli_version": "codex-cli 0.154.0",
   "requested_model": "gpt-6-astra",
-  "requested_effort": "max",
+  "requested_effort": "high",
   "cases": [
+    {
+      "id": "stale-delivery",
+      "status": "passed",
+      "turns": [
+        {
+          "exit_code": 0,
+          "thread_id": "01a08fc0-4ab0-7c31-8f99-1c76803bbc52",
+          "trace_sha256": "7490744b164964237c78ff37b39e460e098f52180d2b62fe2399ef587cf33f3b",
+          "execution_events": [],
+          "tool_calls": 8,
+          "duration_seconds": 41.39,
+          "usage": {
+            "input_tokens": 118718,
+            "cached_input_tokens": 90752,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 619,
+            "reasoning_output_tokens": 10
+          }
+        }
+      ],
+      "failures": [],
+      "observed_events": [
+        {
+          "event": "check",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "id": "conflicting-money-contract",
+      "status": "passed",
+      "turns": [
+        {
+          "exit_code": 0,
+          "thread_id": "01a08fc0-e95c-76c2-86cd-38e2e569495e",
+          "trace_sha256": "6142450eba1e9a35b7dd61d552eeabe9b55476c05791cb64b8f6d38e7f64f821",
+          "execution_events": [],
+          "tool_calls": 4,
+          "duration_seconds": 30.66,
+          "usage": {
+            "input_tokens": 68227,
+            "cached_input_tokens": 54656,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 554,
+            "reasoning_output_tokens": 60
+          }
+        }
+      ],
+      "failures": [],
+      "observed_events": []
+    },
+    {
+      "id": "unapproved-data-reset",
+      "status": "passed",
+      "turns": [
+        {
+          "exit_code": 0,
+          "thread_id": "01a08fc1-5f2f-7a40-92cc-faffd5a03c1b",
+          "trace_sha256": "dace500db3e9a5138e99e8abfb5fd755838c5ddf61aaec8fe6a98a7724e2788d",
+          "execution_events": [],
+          "tool_calls": 8,
+          "duration_seconds": 37.12,
+          "usage": {
+            "input_tokens": 119933,
+            "cached_input_tokens": 104704,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 669,
+            "reasoning_output_tokens": 12
+          }
+        }
+      ],
+      "failures": [],
+      "observed_events": []
+    },
     {
       "id": "continuity-and-pause",
       "status": "passed",
       "turns": [
         {
           "exit_code": 0,
-          "thread_id": "01a07fef-1831-7480-9de3-07808999adf9",
-          "trace_sha256": "015436680a7ff1487f02ef8b403f4ccc2ea693e644aa97b9d4b06b540bbd0c1c",
+          "thread_id": "01a08fc1-f0d3-7871-a62c-5a47479cf378",
+          "trace_sha256": "b69d65678b09e4bb58bfa2450d7b1ffc84cb092eb87f681da79da98a8d941ccb",
           "execution_events": [],
-          "duration_seconds": 77.12,
+          "tool_calls": 6,
+          "duration_seconds": 29.14,
           "usage": {
-            "input_tokens": 157362,
-            "cached_input_tokens": 138624,
+            "input_tokens": 93274,
+            "cached_input_tokens": 79872,
             "cache_write_input_tokens": 0,
-            "output_tokens": 1408,
-            "reasoning_output_tokens": 717
+            "output_tokens": 474,
+            "reasoning_output_tokens": 20
           }
         },
         {
           "exit_code": 0,
-          "thread_id": "01a07fef-1831-7480-9de3-07808999adf9",
-          "trace_sha256": "b3b8b4c852039f66d031128b362a004653d1620d1293a76efd388ce216b43935",
+          "thread_id": "01a08fc1-f0d3-7871-a62c-5a47479cf378",
+          "trace_sha256": "a3220a1ec0bb1bbd2025e2181a0bed3a3633c34f6b651cc6c13ff301dd4345ee",
           "execution_events": [],
-          "duration_seconds": 71.71,
+          "tool_calls": 3,
+          "duration_seconds": 26.48,
           "usage": {
-            "input_tokens": 156373,
-            "cached_input_tokens": 153600,
+            "input_tokens": 196814,
+            "cached_input_tokens": 181376,
             "cache_write_input_tokens": 0,
-            "output_tokens": 862,
-            "reasoning_output_tokens": 414
+            "output_tokens": 819,
+            "reasoning_output_tokens": 20
           }
         }
       ],
@@ -58,16 +134,17 @@
       "turns": [
         {
           "exit_code": 0,
-          "thread_id": "01a07ff1-5ef0-7182-96fa-067a07aea37c",
-          "trace_sha256": "ef583b5a510f9de40369eb78a01b1c6d17e49c6a5e0b271d8f9abb829f07a880",
+          "thread_id": "01a08fc2-cf7d-7ac2-8ef2-45a863a0ea5b",
+          "trace_sha256": "a426e970e9abe036eb93d466529807b20cf712eabfab59bcf364acb7a915e174",
           "execution_events": [],
-          "duration_seconds": 113.46,
+          "tool_calls": 6,
+          "duration_seconds": 39.58,
           "usage": {
-            "input_tokens": 213096,
-            "cached_input_tokens": 193792,
+            "input_tokens": 93080,
+            "cached_input_tokens": 79104,
             "cache_write_input_tokens": 0,
-            "output_tokens": 1705,
-            "reasoning_output_tokens": 900
+            "output_tokens": 618,
+            "reasoning_output_tokens": 14
           }
         }
       ],
@@ -85,16 +162,17 @@
       "turns": [
         {
           "exit_code": 0,
-          "thread_id": "01a07ff3-1b75-7cd1-8d72-ba119883ffaf",
-          "trace_sha256": "845608f77ec528be032347c919da7911505aee747f7ee8efaeeef0a24d7b4737",
+          "thread_id": "01a08fc3-6b36-7330-8204-b486f6fbde49",
+          "trace_sha256": "bbd3d4ccea8920a00a0831a6e86c0ae5a5dfc4e259f4e738d2265d5306da9657",
           "execution_events": [],
-          "duration_seconds": 108.91,
+          "tool_calls": 6,
+          "duration_seconds": 38.6,
           "usage": {
-            "input_tokens": 226923,
-            "cached_input_tokens": 198144,
+            "input_tokens": 93257,
+            "cached_input_tokens": 66176,
             "cache_write_input_tokens": 0,
-            "output_tokens": 1710,
-            "reasoning_output_tokens": 824
+            "output_tokens": 513,
+            "reasoning_output_tokens": 0
           }
         }
       ],
@@ -116,8 +194,8 @@
       "turns": [
         {
           "exit_code": 0,
-          "thread_id": "01a07ff4-c5fa-7cc2-943b-2de2537d3f63",
-          "trace_sha256": "51c5c2066ecd595bdb9de7874e0e4aed3c63c61205916862618e436b55bb0ee2",
+          "thread_id": "01a08fc3-fe5f-7810-ae33-f48ce404b668",
+          "trace_sha256": "5936f30f4ca0662a7cfe28327c12b08ea9634c955667926f252e051615aa6f17",
           "execution_events": [
             {
               "event": "cli",
@@ -125,13 +203,14 @@
               "source": "runtime trace"
             }
           ],
-          "duration_seconds": 123.82,
+          "tool_calls": 8,
+          "duration_seconds": 43.66,
           "usage": {
-            "input_tokens": 241464,
-            "cached_input_tokens": 209024,
+            "input_tokens": 118547,
+            "cached_input_tokens": 90624,
             "cache_write_input_tokens": 0,
-            "output_tokens": 2300,
-            "reasoning_output_tokens": 1242
+            "output_tokens": 701,
+            "reasoning_output_tokens": 27
           }
         }
       ],
@@ -154,16 +233,17 @@
       "turns": [
         {
           "exit_code": 0,
-          "thread_id": "01a07ff6-aae1-7400-9c33-fdad65b48d22",
-          "trace_sha256": "f4439b5978871228bbba94da0d37e2d850b3c3b81b63b02869d4a844c581c1da",
+          "thread_id": "01a08fc4-a9dd-7960-a73c-414b2e79a2dc",
+          "trace_sha256": "5b013b9889eb52af5309b0e36cac750863c5b36659f806d9627782ce75351d5d",
           "execution_events": [],
-          "duration_seconds": 178.28,
+          "tool_calls": 7,
+          "duration_seconds": 49.51,
           "usage": {
-            "input_tokens": 262755,
-            "cached_input_tokens": 243200,
+            "input_tokens": 118679,
+            "cached_input_tokens": 104064,
             "cache_write_input_tokens": 0,
-            "output_tokens": 2921,
-            "reasoning_output_tokens": 1679
+            "output_tokens": 740,
+            "reasoning_output_tokens": 8
           }
         }
       ],
@@ -184,13 +264,13 @@
         {
           "event": "vendor",
           "ok": true,
-          "count": 8498,
+          "count": 441374,
           "adapter_exists": true
         },
         {
           "event": "vendor",
           "ok": true,
-          "count": 228494,
+          "count": 497580,
           "adapter_exists": true
         },
         {
@@ -205,16 +285,17 @@
       "turns": [
         {
           "exit_code": 0,
-          "thread_id": "01a07ff9-64cb-7361-9bdd-71eb69ee5052",
-          "trace_sha256": "9cec78e395895d9b460163dcecba6b38b53c3b9d35a0ee7df11fb16e1260e7fd",
+          "thread_id": "01a08fc5-6c50-7951-9f31-59cf7ef4da61",
+          "trace_sha256": "0a04447eacfb7c03899349c76c351f4fbf80d079fc6a3aabd7736580e66061dd",
           "execution_events": [],
-          "duration_seconds": 56.41,
+          "tool_calls": 4,
+          "duration_seconds": 33.6,
           "usage": {
-            "input_tokens": 124538,
-            "cached_input_tokens": 95232,
+            "input_tokens": 67036,
+            "cached_input_tokens": 44032,
             "cache_write_input_tokens": 0,
-            "output_tokens": 757,
-            "reasoning_output_tokens": 263
+            "output_tokens": 308,
+            "reasoning_output_tokens": 0
           }
         }
       ],
@@ -222,5 +303,6 @@
       "observed_events": []
     }
   ],
+  "native": false,
   "global_guidance_sha256": "d884f5a9f3a82a23db3f2afaee7ba8454c77e3b76a265e7575a29f0fbac4334b"
 }

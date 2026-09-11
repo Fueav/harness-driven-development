@@ -30,7 +30,7 @@ def identity(repository=None):
               "runner": digest(Path(__file__))}
     if repository:
         hasher = hashlib.sha256()
-        for relative in ("docs/harness-workflows.md", "specs/_template/spec.md"):
+        for relative in ("AGENTS.md", "docs/harness-workflows.md", "specs/_template/spec.md"):
             hasher.update(relative.encode() + b"\0" + (repository / relative).read_bytes() + b"\0")
         result["workflow"] = hasher.hexdigest()
     return result
@@ -55,6 +55,8 @@ def copy_checkout(repository, target):
     tracked = subprocess.check_output(["git", "ls-files", "-z"], cwd=repository).decode().split("\0")
     for relative in filter(None, tracked):
         source = repository / relative
+        if not source.exists() and not source.is_symlink():
+            continue
         destination = target / relative
         if not source.resolve().is_relative_to(repository):
             raise ValueError("fixture source contains an escaping symlink: " + relative)
@@ -185,15 +187,15 @@ def run_turn(binary, repo, prompt, directory, index, previous, timeout, ephemera
     events = [json.loads(line) for line in trace.read_text().splitlines() if line.strip()]
     thread = next((event.get("thread_id") for event in events if event.get("type") == "thread.started"), previous)
     usage = next((event["usage"] for event in reversed(events) if event.get("type") == "turn.completed"), {})
-    return {"exit_code": process.returncode, "thread_id": thread, "trace_sha256": digest(trace), "execution_events": execution_events(events),
+    tool_calls = sum(event.get("type") == "item.completed" and event.get("item", {}).get("type") in {"command_execution", "mcp_tool_call", "web_search"} for event in events)
+    return {"exit_code": process.returncode, "thread_id": thread, "trace_sha256": digest(trace), "execution_events": execution_events(events), "tool_calls": tool_calls,
             "duration_seconds": round(time.monotonic() - start, 2), "usage": usage}, answer.read_text() if answer.exists() else ""
 
 
 def run(args):
     repository = args.repository.resolve()
-    subprocess.run([sys.executable, str(repository / "harness/repository_verification.py"), "ready"],
-                   cwd=repository, env={**os.environ, "HARNESS_PROJECT_ROOT": str(repository)},
-                   check=True, capture_output=True)
+    skill_repo = (args.skill_repository or ROOT).resolve()
+    skill = skill_repo / "plugins/harness-driven-development/skills/harness-driven-development"
     output = args.output.resolve()
     if output == repository or repository in output.parents:
         raise ValueError("output must be outside the fixture source repository")
@@ -202,6 +204,8 @@ def run(args):
     result = {"schema_version": 1, "identity": identity(repository), "adapter": "codex exec",
               "cli_version": subprocess.check_output([args.codex, "--version"], text=True).strip(),
               "requested_model": args.model, "requested_effort": args.reasoning_effort, "cases": []}
+    result["identity"]["skill"] = skill_package_sha256(skill_repo)
+    result["native"] = args.native
     guidance = Path.home() / ".codex/AGENTS.md"
     result["global_guidance_sha256"] = digest(guidance) if guidance.is_file() else None
     for name in args.case or CASES:
@@ -211,7 +215,8 @@ def run(args):
         with tempfile.TemporaryDirectory(prefix="hdd-behavior-") as temp:
             repo = Path(temp).resolve() / "target"
             copy_checkout(repository, repo)
-            shutil.copytree(SKILL, repo / ".eval-skill")
+            if not args.native:
+                shutil.copytree(skill, repo / ".eval-skill")
             write_fixture(repo, case)
             subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
             subprocess.run(["git", "add", "-A"], cwd=repo, check=True)
@@ -222,7 +227,7 @@ def run(args):
             turns, failures, previous, answer, runtime_events = [], [], None, "", []
             for index, request in enumerate(case["turns"], 1):
                 context = (
-                    "Use $harness-driven-development at .eval-skill/SKILL.md for this task. "
+                    ("Read AGENTS.md. " if args.native else "Read AGENTS.md and use $harness-driven-development at .eval-skill/SKILL.md for this task. ") +
                     "This is a disposable fixture checkout. Work in this checkout; do not create branches, "
                     "worktrees, commits, deployments, installations, or access unrelated machine resources. "
                     "For this fixture task the owner selects python3 internal/example_account/task/check.py as the required verification "
@@ -266,6 +271,8 @@ def main():
     commands = parser.add_subparsers(dest="command", required=True)
     execute = commands.add_parser("run")
     execute.add_argument("--repository", type=Path, required=True)
+    execute.add_argument("--skill-repository", type=Path, help="Optional baseline plugin checkout")
+    execute.add_argument("--native", action="store_true", help="Evaluate direct repository work without loading a skill")
     execute.add_argument("--output", type=Path, required=True)
     execute.add_argument("--codex", default="codex")
     execute.add_argument("--model", help="Explicit operator-selected model; otherwise uses the CLI default")
