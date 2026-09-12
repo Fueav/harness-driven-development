@@ -1,6 +1,6 @@
 {
   "name": "harness-driven-development",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Routes daily target work after the repository-local readiness handoff passes.",
   "author": {
     "name": "Fueav",

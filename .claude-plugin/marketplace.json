@@ -1,7 +1,5 @@
 {
-  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "fueav-harness-development",
-  "description": "Cross-client Harness workflow skills.",
   "owner": {
     "name": "Fueav"
   },
@@ -10,7 +8,7 @@
       "name": "harness-driven-development",
       "source": "./plugins/harness-driven-development",
       "description": "Routes daily target work after the repository-local readiness handoff passes.",
-      "version": "4.0.0",
+      "version": "4.0.1",
       "author": {
         "name": "Fueav"
       },
@@ -23,5 +21,8 @@
       ],
       "strict": false
     }
-  ]
+  ],
+  "metadata": {
+    "description": "Cross-client Harness workflow skills."
+  }
 }
