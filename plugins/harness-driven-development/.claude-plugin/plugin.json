@@ -1,7 +1,7 @@
 {
   "name": "harness-driven-development",
-  "version": "4.0.1",
-  "description": "Routes daily target work after the repository-local readiness handoff passes.",
+  "version": "4.0.2",
+  "description": "Compatibility entrypoint when explicitly requested for work in a Harness repository.",
   "author": {
     "name": "Fueav",
     "url": "https://github.com/Fueav"

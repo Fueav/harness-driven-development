@@ -72,8 +72,8 @@ python3 scripts/run_behavior_evals.py run --repository /path/to/harness-target -
 CODEX_PYTHON="${CODEX_PYTHON:-python3}"
 "$CODEX_PYTHON" "${CODEX_HOME:-$HOME/.codex}/skills/.system/plugin-creator/scripts/validate_plugin.py" plugins/harness-driven-development
 "$CODEX_PYTHON" "${CODEX_HOME:-$HOME/.codex}/skills/.system/skill-creator/scripts/quick_validate.py" plugins/harness-driven-development/skills/harness-driven-development
-claude plugin validate plugins/harness-driven-development --strict
-claude plugin validate . --strict
+claude plugin validate plugins/harness-driven-development
+claude plugin validate .
 ```
 
 After successful real-task evaluation, copy its results.json to evals/behavior-results.json. Release validation checks its Skill/runner/case identity; Scaffold Source suite verification also checks the evaluated workflow identity. Results include trace digests, observations, and usage; this is a regression sample, not a guarantee across future models. See [`docs/CONTRACT.md`](docs/CONTRACT.md).

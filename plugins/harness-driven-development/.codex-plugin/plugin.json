@@ -1,7 +1,7 @@
 {
   "name": "harness-driven-development",
-  "version": "4.0.1",
-  "description": "Routes daily target work after the repository-local readiness handoff passes.",
+  "version": "4.0.2",
+  "description": "Compatibility entrypoint when explicitly requested for work in a Harness repository.",
   "author": {
     "name": "Fueav",
     "url": "https://github.com/Fueav"
@@ -16,9 +16,9 @@
   ],
   "skills": "./skills/",
   "interface": {
-    "displayName": "Harness Driven Development",
-    "shortDescription": "Ready-target daily workflow",
-    "longDescription": "Use for daily work only after the target Repository Contract passes readiness.",
+    "displayName": "Harness Compatibility",
+    "shortDescription": "Optional Harness compatibility entrypoint",
+    "longDescription": "Compatibility entrypoint when explicitly requested for work in a Harness repository.",
     "developerName": "Fueav",
     "category": "Developer Tools",
     "capabilities": [
@@ -27,7 +27,7 @@
       "Write"
     ],
     "defaultPrompt": [
-      "Use $harness-driven-development after repository_verification.py ready passes for this target task."
+      "Use $harness-driven-development to complete this task using the repository contract."
     ]
   }
 }
