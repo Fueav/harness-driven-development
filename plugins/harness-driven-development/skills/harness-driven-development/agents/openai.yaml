@@ -1,6 +1,0 @@
-interface:
-  display_name: "Harness Compatibility"
-  short_description: "Optional entrypoint for Harness repository work"
-  default_prompt: "Use $harness-driven-development to complete this task using the repository contract."
-policy:
-  allow_implicit_invocation: false
