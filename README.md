@@ -4,4 +4,4 @@ This repository preserves historical compatibility-skill evidence. It no longer 
 
 Daily development uses each project's native commands and product contracts. Explicit scaffold migration belongs to [ai-first-go-template](https://github.com/moss-site/ai-first-go-template) and [harness-template-sync](https://github.com/Fueav/harness-template-sync).
 
-Existing installed copies are not changed by this source retirement. Historical results and their audit sources remain under [`evals/`](evals/README.md); they do not validate the replacement development path. See [`docs/CONTRACT.md`](docs/CONTRACT.md).
+Existing installed copies are not changed by this source retirement. Historical results remain under [`evals/`](evals/README.md). CI runs `python3 scripts/check_retirement.py` to check removal and byte preservation, not replacement product behavior. See [`docs/CONTRACT.md`](docs/CONTRACT.md).
